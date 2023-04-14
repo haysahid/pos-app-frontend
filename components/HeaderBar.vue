@@ -1,0 +1,30 @@
+<template>
+  <header class="bg-white pl-[250px] top-0 fixed w-full z-[998]">
+    <nav
+      class="mx-auto flex items-end justify-between py-4 px-4"
+      aria-label="Global"
+    >
+      <div class="flex flex-1 justify-end">
+        <a
+          href="#"
+          class="flex items-center gap-x-1 text-sm leading-6 text-grey-60"
+          >
+          <img src="/assets/images/user.png" alt="" class="w-[32px]">
+          Administrator
+          <svg
+            class="h-5 w-5 flex-none text-grey-40"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </a>
+      </div>
+    </nav>
+  </header>
+</template>
