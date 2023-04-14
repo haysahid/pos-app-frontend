@@ -9,8 +9,8 @@
           href="#"
           class="flex items-center gap-x-1 text-sm leading-6 text-grey-60"
           >
-          <img src="/assets/images/user.png" alt="" class="w-[32px]">
-          Administrator
+          <img src="/assets/images/user.png" alt="" class="w-[32px] mr-1">
+          {{ this.$auth.user.name }}
           <svg
             class="h-5 w-5 flex-none text-grey-40"
             viewBox="0 0 20 20"

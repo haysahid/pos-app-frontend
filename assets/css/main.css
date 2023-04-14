@@ -70,11 +70,11 @@
     @apply brightness-[1];
   }
 
-  .nav-link.active {
-    @apply bg-secondary rounded-[8px] text-primary font-bold;
+  .nav-link.nuxt-link-active {
+    @apply bg-secondary rounded-[8px] text-primary font-bold hover:text-primary;
   }
 
-  .nav-link.active img {
+  .nav-link.nuxt-link-active img {
     /* @apply brightness-0 invert; */
     @apply saturate-[7] hue-rotate-15 contrast-200 brightness-[.58];
   }

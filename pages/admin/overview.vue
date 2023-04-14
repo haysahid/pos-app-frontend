@@ -22,9 +22,8 @@
 </template>
 
 <script>
-import Dashboard from '~/layouts/dashboard.vue'
-
 export default {
   layout: 'dashboard',
+  middleware: 'auth',
 }
 </script>

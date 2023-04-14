@@ -1,20 +1,39 @@
 <template>
-  <div class="overflow-y-auto flex flex-col min-w-[40%] h-full mr-[24px] mt-[24px]">
+  <div
+    class="overflow-y-auto flex flex-col min-w-[40%] h-full mr-[24px] mt-[24px]"
+  >
     <form class="w-full card pt-[24px] flex-grow px-[40px]">
       <div class="flex justify-between">
-        <h1 class="text-[20px] font-bold text-dark pt-4 pb-2">Add Product</h1>
+        <h1 class="text-[20px] font-bold text-dark pt-4 pb-2">
+          {{ isEdit ? 'Edit Product' : 'Add Product' }}
+        </h1>
       </div>
       <div class="form-group">
         <label for="" class="input-label">Brand Name*</label>
-        <input type="text" class="input-field" placeholder="Brand Name" />
+        <input
+          type="text"
+          class="input-field"
+          placeholder="Brand Name"
+          :value="isEdit ? product.brand.name : ''"
+        />
       </div>
       <div class="form-group">
         <label for="" class="input-label">Product Name*</label>
-        <input type="text" class="input-field" placeholder="Product Name" />
+        <input
+          type="text"
+          class="input-field"
+          placeholder="Product Name"
+          :value="isEdit ? product.name : ''"
+        />
       </div>
       <div class="form-group">
         <label for="" class="input-label">Image</label>
-        <div class="flex items-center justify-center w-full">
+        <img
+          :src="'http://localhost:8000/' + product.image"
+          alt=""
+          v-if="product.image != null"
+        />
+        <div class="flex items-center justify-center w-full" v-else>
           <label
             for="dropzone-file"
             class="flex flex-col items-center justify-center w-full h-36 border-[1.45px] border-grey-60 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
@@ -47,22 +66,30 @@
       </div>
       <div class="form-group">
         <label for="" class="input-label">Description</label>
-        <textarea class="input-field" placeholder="Description"> </textarea>
+        <textarea class="input-field" placeholder="Description"
+          >{{ isEdit ? product.description : '' }} </textarea
+        >
       </div>
       <div class="form-group">
         <label for="" class="input-label">Warehouse*</label>
         <select name="" id="" class="input-field">
-          <option value="">Option 1</option>
-          <option value="">Option 2</option>
-          <option value="">Option 3</option>
+          <option
+            :value="warehouse.id"
+            v-for="warehouse in warehouses.data.result"
+          >
+            {{ warehouse.name }}
+          </option>
         </select>
       </div>
       <div class="form-group">
         <label for="" class="input-label">Category</label>
         <select name="" id="" class="input-field">
-          <option value="">Option 1</option>
-          <option value="">Option 2</option>
-          <option value="">Option 3</option>
+          <option
+            :value="categories.id"
+            v-for="category in categories.data.result"
+          >
+            {{ category.name }}
+          </option>
         </select>
       </div>
       <div class="flex flex-row gap-4">
@@ -73,10 +100,17 @@
           Cancel
         </a>
       </div>
-
-      <!-- <button type="button" class="w-full btn btn-primary mt-[14px]">
-              Sign In
-          </button> -->
     </form>
   </div>
 </template>
+
+<script>
+export default {
+  props: {
+    isEdit: Boolean,
+    product: [],
+    warehouses: [],
+    categories: [],
+  },
+}
+</script>
