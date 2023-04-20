@@ -4,13 +4,14 @@
   >
     <form
       class="w-full card pt-[24px] flex-grow px-[40px]"
-      @submit.prevent="isEdit ? editProduct() : addProduct()"
+      @submit.prevent="addProduct"
+      enctype="multipart/form-data"
     >
       <div class="flex justify-between">
-        <h1 class="text-[20px] font-bold text-dark pt-4 pb-2">
-          {{ isEdit ? 'Edit Product' : 'Add Product' }}
-        </h1>
+        <h1 class="text-[20px] font-bold text-dark pt-4 pb-2">Add Product</h1>
       </div>
+
+      <!-- Brand -->
       <div class="form-group">
         <label for="" class="input-label">Brand</label>
         <p v-if="$fetchState.pending">Fetching brands...</p>
@@ -19,28 +20,29 @@
           id=""
           class="input-field"
           v-else
-          :value="brand_id"
-          @change="updateBrandId"
+          v-model="product.brand_id"
         >
           <option :value="brand.id" v-for="brand in brands.data.result">
             {{ brand.name }}
           </option>
         </select>
       </div>
+
+      <!-- Product Name -->
       <div class="form-group">
         <label for="" class="input-label">Product Name*</label>
         <input
           type="text"
           class="input-field"
           placeholder="Product Name"
-          :value="name"
-          @change="updateName"
+          v-model="product.name"
         />
       </div>
+
+      <!-- Image -->
       <div class="form-group">
         <label for="" class="input-label">Image</label>
-        <img :src="image_path + product.image" alt="" v-if="isEdit" />
-        <div class="flex items-center justify-center w-full" v-else>
+        <div class="flex items-center justify-center w-full">
           <label
             for="dropzone-file"
             class="flex flex-col items-center justify-center w-full h-36 border-[1.45px] border-grey-60 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
@@ -71,21 +73,23 @@
               id="dropzone-file"
               type="file"
               class="hidden"
-              :value="image"
-              @change="updateImage"
+              v-on:change="updateImage"
             />
           </label>
         </div>
       </div>
+
+      <!-- Description -->
       <div class="form-group">
         <label for="" class="input-label">Description</label>
         <textarea
           class="input-field"
           placeholder="Description"
-          :value="description"
-          @change="updateDescription"
+          v-model="product.description"
         ></textarea>
       </div>
+
+      <!-- Warehouse -->
       <div class="form-group">
         <label for="" class="input-label">Warehouse*</label>
         <p v-if="$fetchState.pending">Fetching warehouses...</p>
@@ -94,8 +98,7 @@
           id=""
           class="input-field"
           v-else
-          :value="warehouse_id"
-          @change="updateWarehouseId"
+          v-model="product.warehouse_id"
         >
           <option
             :value="warehouse.id"
@@ -105,6 +108,8 @@
           </option>
         </select>
       </div>
+
+      <!-- Category -->
       <div class="form-group">
         <label for="" class="input-label">Category</label>
         <p v-if="$fetchState.pending">Fetching categories...</p>
@@ -113,8 +118,7 @@
           id=""
           class="input-field"
           v-else
-          :value="category_id"
-          @change="updateCategoryId"
+          v-model="product.category_id"
         >
           <option
             :value="category.id"
@@ -124,11 +128,18 @@
           </option>
         </select>
       </div>
+
+      <!-- Button -->
       <div class="flex flex-row gap-4">
         <button type="submit" class="btn btn-primary mt-[14px] self-start">
-          {{ isEdit ? 'Save Changes' : 'Add Product' }}
+          Add Product
         </button>
-        <button class="btn btn-danger mt-[14px] self-start">Cancel</button>
+        <button
+          class="btn btn-danger mt-[14px] self-start"
+          @click="setAdd(false)"
+        >
+          Cancel
+        </button>
       </div>
     </form>
   </div>
@@ -136,25 +147,20 @@
 
 <script>
 export default {
-  name: 'ProductForm',
-  props: {
-    isEdit: Boolean,
-    product: [],
-  },
+  name: 'AddProduct',
   data() {
     return {
       image_path: 'http://localhost:8000/storage/',
       brands: [],
       warehouses: [],
       categories: [],
-      form_data: {
-        brand_id: this.isEdit ? this.product.brand_id : null,
-        name: this.isEdit ? this.product.name : null,
-        description: this.isEdit ? this.product.description : null,
-        image: '',
-        warehouse_id: this.isEdit ? this.product.warehouse_id : null,
-        category_id: this.isEdit ? this.product.category_id : null,
-        _method: '',
+      product: {
+        brand_id: null,
+        name: null,
+        description: null,
+        image: null,
+        warehouse_id: null,
+        category_id: null,
       },
     }
   },
@@ -163,55 +169,34 @@ export default {
     this.warehouses = await this.$axios.get('/warehouse')
     this.categories = await this.$axios.get('/category')
   },
-  computed: {
-    brand_id() {
-      return this.form_data.brand_id
-    },
-    name() {
-      return this.form_data.name
-    },
-    description() {
-      return this.form_data.description
-    },
-    image() {
-      return this.form_data.image
-    },
-    warehouse_id() {
-      return this.form_data.warehouse_id
-    },
-    category_id() {
-      return this.form_data.category_id
-    },
-  },
   methods: {
     async addProduct() {
-      this.form_data._method = 'POST'
-      let response = await this.$axios.post('/product', this.form_data)
-    },
-    async editProduct() {
-      this.form_data._method = 'PUT'
-      let response = await this.$axios.post(
-        `/product/${this.product.id}`,
-        this.form_data
-      )
-    },
-    updateBrandId(event) {
-      this.form_data.brand_id = event.target.value
-    },
-    updateName(event) {
-      this.form_data.name = event.target.value
+      let data = new FormData()
+
+      for (const [key, value] of Object.entries(this.product)) {
+        if (value) {
+          data.append(key, value)
+        }
+      }
+
+      try {
+        let response = await this.$axios.post('/product', data, {
+          'content-type': 'multipart/form-data',
+        })
+        this.refreshData()
+        this.setAdd(false)
+      } catch (error) {
+        console.log(error.message)
+      }
     },
     updateImage(event) {
-      this.form_data.image = event.target.files[0]
+      this.product.image = event.target.files[0]
     },
-    updateDescription(event) {
-      this.form_data.description = event.target.value
+    setAdd(status) {
+      this.$store.commit('setAdd', status)
     },
-    updateWarehouseId(event) {
-      this.form_data.warehouse_id = event.target.value
-    },
-    updateCategoryId(event) {
-      this.form_data.category_id = event.target.value
+    refreshData() {
+      this.$store.commit('refreshData')
     },
   },
 }

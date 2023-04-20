@@ -1,6 +1,6 @@
 <template>
   <div
-    class="overflow-y-auto flex flex-col min-w-[40%] h-full mr-[24px] mt-[24px]"
+    class="sticky top-[74px] right-0 overflow-y-auto flex flex-col min-w-[40%] h-full mr-[24px] mt-[24px]"
   >
     <div class="w-full card pt-[24px] flex-grow px-[40px]">
       <div class="flex flex-col justify-between">

@@ -32,6 +32,7 @@
                 <div
                   class="flex flex-col justify-center w-full border-l-[1.45px] border-primary rounded-r-lg bg-page"
                 >
+                
                   <!-- Order Item Component -->
                   <div class="card px-4 py-6 bg-secondary">
                     <div class="card p-0 bg-white">
