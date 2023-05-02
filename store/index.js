@@ -1,7 +1,5 @@
 export const state = () => ({
-    add: false,
-    edit: false,
-    refresh: 0,
+    settings: {},
 })
 
 export const mutations = {
@@ -11,7 +9,24 @@ export const mutations = {
     setEdit(state, payload) {
         state.edit = payload
     },
-    refreshData(state) {
-        state.refresh += 1
+
+    // Set Settings
+    setSettings(state, payload) {
+        state.settings = payload
+    }
+}
+
+export const actions = {
+    // Get Settings
+    async getSettings({ commit }) {
+        const response = await this.$axios.get('/setting')
+
+        let settings = {}
+
+        response.data.result.forEach((item) => {
+            settings[item.key] = item.value
+        })
+
+        commit('setSettings', settings)
     }
 }

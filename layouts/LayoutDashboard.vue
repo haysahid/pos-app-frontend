@@ -1,10 +1,7 @@
-import HeaderBar from '~/components/HeaderBar.vue'; import Sidebar from
-'~/components/sidebar.vue';
-
 <template>
   <body>
     <SideBar />
-    <HeaderBar />
+    <HeaderBar :details="false" />
     <svg
       viewBox="0 0 24 24"
       fill="white"

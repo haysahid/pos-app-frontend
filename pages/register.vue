@@ -1,14 +1,50 @@
 <template>
   <!-- Main -->
-  <main class="flex justify-center">
+  <main class="flex justify-center px-[24px]">
     <!-- Content -->
     <section
-      class="py-[60px] min-w-[450px] flex flex-col items-center justify-center px-4"
+      class="py-[60px] max-w-[450px] flex flex-col items-center flex-grow justify-center"
     >
-      <img src="/assets/svgs/logo-type.svg" alt="" />
+      <!-- Logo -->
+      <div class="h-[60px] flex items-center justify-between">
+        <a href="#" class="flex justify-center items-center gap-3 px-[5.5px]">
+          <div
+            class="p-3 bg-primary rounded-full"
+            v-if="!$store.state.settings.app_logo"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="white"
+              class="w-8 h-8"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M7.5 5.25a3 3 0 013-3h3a3 3 0 013 3v.205c.933.085 1.857.197 2.774.334 1.454.218 2.476 1.483 2.476 2.917v3.033c0 1.211-.734 2.352-1.936 2.752A24.726 24.726 0 0112 15.75c-2.73 0-5.357-.442-7.814-1.259-1.202-.4-1.936-1.541-1.936-2.752V8.706c0-1.434 1.022-2.7 2.476-2.917A48.814 48.814 0 017.5 5.455V5.25zm7.5 0v.09a49.488 49.488 0 00-6 0v-.09a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5zm-3 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                clip-rule="evenodd"
+              />
+              <path
+                d="M3 18.4v-2.796a4.3 4.3 0 00.713.31A26.226 26.226 0 0012 17.25c2.892 0 5.68-.468 8.287-1.335.252-.084.49-.189.713-.311V18.4c0 1.452-1.047 2.728-2.523 2.923-2.12.282-4.282.427-6.477.427a49.19 49.19 0 01-6.477-.427C4.047 21.128 3 19.852 3 18.4z"
+              />
+            </svg>
+          </div>
+          <img
+            :src="image_path + $store.state.settings.app_logo"
+            alt=""
+            class="h-[50px]"
+            v-else
+          />
+          <p class="text-2xl font-bold text-dark">
+            {{ $store.state.settings.app_name }}
+          </p>
+        </a>
+      </div>
 
       <!-- Register Form -->
-      <form class="w-full card mt-[40px]" @submit.prevent="userRegister">
+      <form
+        class="w-full card form-container mt-[40px]"
+        @submit.prevent="userRegister"
+      >
         <div class="text-3xl font-bold text-dark text-center">Register</div>
         <p class="mt-1 leading-7 text-center mb-2 text-grey-80">
           Register to create new account
@@ -16,45 +52,75 @@
 
         <!-- Full Name -->
         <div class="form-group">
-          <label for="" class="input-label">Full Name*</label>
+          <label for="" class="input-label required">Full Name</label>
           <input
             type="text"
             class="input-field"
             placeholder="Full Name"
             v-model="register.name"
           />
+
+          <!-- Validation -->
+          <p class="text-red-500 text-xs italic" v-if="validation.errors?.name">
+            {{ validation.errors?.name[0] }}
+          </p>
         </div>
 
         <!-- Email -->
         <div class="form-group">
-          <label for="" class="input-label">Email Address*</label>
+          <label for="" class="input-label required">Email Address</label>
           <input
             type="email"
             class="input-field"
             placeholder="Email"
             v-model="register.email"
           />
+
+          <!-- Validation -->
+          <p
+            class="text-red-500 text-xs italic"
+            v-if="validation.errors?.email"
+          >
+            {{ validation.errors?.email[0] }}
+          </p>
         </div>
 
         <!-- Password -->
         <div class="form-group">
-          <label for="" class="input-label">Password*</label>
+          <label for="" class="input-label required">Password</label>
           <input
             type="password"
             class="input-field"
             placeholder="Password"
             v-model="register.password"
           />
+
+          <!-- Validation -->
+          <p
+            class="text-red-500 text-xs italic"
+            v-if="validation.errors?.password"
+          >
+            {{ validation.errors?.password[0] }}
+          </p>
         </div>
 
         <!-- Confirm Password -->
         <div class="form-group">
-          <label for="" class="input-label">Confirm Password*</label>
+          <label for="" class="input-label required">Confirm Password</label>
           <input
             type="password"
             class="input-field"
             placeholder="Confirm Password"
+            v-model="confirm_password"
           />
+
+          <!-- Validation -->
+          <p
+            class="text-red-500 text-xs italic"
+            v-if="confirm_password != register.password"
+          >
+            The confirm password field is not match.
+          </p>
         </div>
 
         <!-- Terms and Conditions -->
@@ -91,39 +157,49 @@ export default {
   auth: 'guest',
   data() {
     return {
+      image_path: 'http://localhost:8000/storage/',
       register: {
         name: '',
         email: '',
         password: '',
       },
+      confirm_password: '',
+      validation: [],
     }
+  },
+  async fetch() {
+    // Get Settings
+    await this.$store.dispatch('getSettings')
   },
   methods: {
     async userRegister() {
-      try {
-        // Send Registration Data to Server
-        let response = await this.$axios.post('/auth/register', this.register)
-
-        // If Successful, Login User
+      if (this.confirm_password == this.register.password) {
         try {
-          let login = await this.$auth.loginWith('local', {
-            data: {
-              email: this.register.email,
-              password: this.register.password,
-            },
-          })
+          // Send Registration Data to Server
+          let response = await this.$axios.post('/auth/register', this.register)
 
-          console.log(login)
-          this.$router.push({
-            name: 'admin-overview',
-          })
-        } catch (err) {
-          console.log(err)
+          // If Successful, Login User
+          try {
+            let login = await this.$auth.loginWith('local', {
+              data: {
+                email: this.register.email,
+                password: this.register.password,
+              },
+            })
+
+            console.log(login)
+            this.$router.push({
+              name: 'admin-overview',
+            })
+          } catch (err) {
+            console.log(err)
+          }
+
+          console.log(response)
+        } catch (error) {
+          console.log(error)
+          this.validation = error.response.data
         }
-
-        console.log(response)
-      } catch (error) {
-        console.log(error)
       }
     },
   },

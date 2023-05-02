@@ -3,7 +3,7 @@
   <div class="w-full" @click.stop>
     <!-- Form Content -->
     <form
-      class="w-full form-container p-[24px] overflow-y-auto h-full"
+      class="w-full form-container p-[24px] overflow-y-auto h-full pb-[100px]"
       @submit.prevent="addOrEditProduct"
       enctype="multipart/form-data"
     >
@@ -16,25 +16,16 @@
       <!-- Brand -->
       <div class="form-group">
         <label for="" class="input-label">Brand</label>
-        <select v-if="$fetchState.pending" class="input-field text-grey-40">
-          <option value="">Loading...</option>
-        </select>
-        <select
-          name=""
-          id=""
-          class="input-field"
-          v-else
-          v-model="product.brand_id"
-        >
-          <option :value="brand.id" v-for="brand in brands.data.result">
-            {{ brand.name }}
-          </option>
-        </select>
+        <InputOptions
+          v-model="product.brand_name"
+          :items="brands"
+          items_title="Brand"
+        />
       </div>
 
       <!-- Product Name -->
       <div class="form-group">
-        <label for="" class="input-label">Product Name*</label>
+        <label for="" class="input-label required">Product Name</label>
         <input
           type="text"
           class="input-field"
@@ -49,7 +40,7 @@
 
         <!-- Image Preview -->
         <div
-          class="flex justify-center w-full border-[1.45px] border-grey-60 rounded-lg bg-gray-50 gap-4 p-5"
+          class="flex justify-center w-full input-field bg-gray-50 gap-4 p-5"
           v-if="product.image && !change_image"
         >
           <img
@@ -127,46 +118,22 @@
 
       <!-- Warehouse -->
       <div class="form-group">
-        <label for="" class="input-label">Warehouse*</label>
-        <select v-if="$fetchState.pending" class="input-field text-grey-40">
-          <option value="">Loading...</option>
-        </select>
-        <select
-          name=""
-          id=""
-          class="input-field"
-          v-else
-          v-model="product.warehouse_id"
-        >
-          <option
-            :value="warehouse.id"
-            v-for="warehouse in warehouses.data.result"
-          >
-            {{ warehouse.name }}
-          </option>
-        </select>
+        <label for="" class="input-label required">Warehouse</label>
+        <InputOptions
+          v-model="product.warehouse_name"
+          :items="warehouses"
+          items_title="Warehouse"
+        />
       </div>
 
       <!-- Category -->
       <div class="form-group">
         <label for="" class="input-label">Category</label>
-        <select v-if="$fetchState.pending" class="input-field text-grey-40">
-          <option value="">Loading...</option>
-        </select>
-        <select
-          name=""
-          id=""
-          class="input-field"
-          v-else
-          v-model="product.category_id"
-        >
-          <option
-            :value="category.id"
-            v-for="category in categories.data.result"
-          >
-            {{ category.name }}
-          </option>
-        </select>
+        <InputOptions
+          v-model="product.category_name"
+          :items="categories"
+          items_title="Category"
+        />
       </div>
 
       <!-- Button -->
@@ -187,6 +154,7 @@
           class="btn btn-danger self-end"
           type="button"
           @click="deleteProduct"
+          v-if="product_id"
         >
           Delete
         </button>
@@ -208,12 +176,12 @@ export default {
       categories: [],
       product_edit: [],
       product: {
-        brand_id: null,
+        brand_name: null,
         name: null,
         description: null,
         image: null,
-        warehouse_id: null,
-        category_id: null,
+        warehouse_name: null,
+        category_name: null,
       },
       change_image: false,
       preview_image: null,
@@ -222,9 +190,17 @@ export default {
   async fetch() {
     this.change_image = false
 
-    this.brands = await this.$axios.get('/brand')
-    this.warehouses = await this.$axios.get('/warehouse')
-    this.categories = await this.$axios.get('/category')
+    // Get Brands
+    const resBrands = await this.$axios.get('/brand')
+    this.brands = resBrands.data.result
+
+    // Get Warehouses
+    const resWarehouses = await this.$axios.get('/warehouse')
+    this.warehouses = resWarehouses.data.result
+
+    // Get Categories
+    const resCategories = await this.$axios.get('/category')
+    this.categories = resCategories.data.result
 
     if (this.product_id) {
       // For Edit
@@ -232,20 +208,20 @@ export default {
 
       const data = this.product_edit.data.result.product
 
-      this.product.brand_id = data.brand_id
+      this.product.brand_name = data.brand.name
       this.product.name = data.name
       this.product.description = data.description
       this.product.image = data.image
-      this.product.warehouse_id = data.warehouse_id
-      this.product.category_id = data.category_id
+      this.product.warehouse_name = data.warehouse.name
+      this.product.category_name = data.category.name
     } else {
       // For Add
-      this.product.brand_id = null
+      this.product.brand_name = null
       this.product.name = null
       this.product.description = null
       this.product.image = null
-      this.product.warehouse_id = null
-      this.product.category_id = null
+      this.product.warehouse_name = null
+      this.product.category_name = null
     }
   },
   watch: {
@@ -330,7 +306,7 @@ export default {
 
     // Refresh Data
     refreshData() {
-      this.$store.commit('refreshData')
+      this.$nuxt.refresh()
     },
   },
 }

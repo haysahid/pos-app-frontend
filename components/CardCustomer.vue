@@ -8,7 +8,7 @@
           {{ address }}
         </p>
         <span class="text-grey-40 text-[12px]"
-          >Created at: {{ created_at }}</span
+          >{{ created_at }}</span
         >
       </div>
     </div>

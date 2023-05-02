@@ -11,7 +11,7 @@
   }
 
   html {
-    @apply bg-page font-inter text-sm;
+    @apply bg-page font-inter text-sm print:bg-white;
   }
 
   .swal2-popup {
@@ -26,15 +26,31 @@
   }
 
   .form-container {
-    @apply overflow-y-auto p-12 flex flex-col gap-y-4;
+    @apply overflow-y-auto p-12 flex flex-col gap-y-5 max-sm:px-8;
   }
 
   .input-label {
     @apply text-grey-80 text-left;
   }
 
+  .input-label.required {
+    @apply after:content-['*'] after:text-red-400;
+  }
+
   .input-field {
-    @apply placeholder:text-grey-40 text-dark py-[10px] px-[10px] rounded-[6px] border-[1.5px] border-grey-40 hover:border-primary-hover focus:border-primary focus:outline-none;
+    @apply placeholder:text-grey-40 text-dark py-[10px] px-[10px] rounded-[6px] bg-gray-50 border-[1.5px] border-grey-20 focus:border-[1.5px] focus:border-primary focus:outline-none;
+  }
+
+  .input-options li {
+    @apply p-3 bg-secondary hover:bg-primary hover:text-white cursor-pointer;
+  }
+
+  .input-options li:nth-child(1) {
+    @apply rounded-t-md;
+  }
+
+  .input-options li:nth-last-child(1) {
+    @apply rounded-b-md;
   }
 
   .btn {
@@ -57,6 +73,18 @@
     @apply bg-red-600 hover:bg-red-500 text-white ease-in-out duration-100;
   }
 
+  table {
+    @apply max-sm:text-[12px];
+  }
+
+  table tr td:nth-child(1) {
+    @apply pl-3;
+  }
+
+  table tr td:nth-last-child(1) {
+    @apply pr-3;
+  }
+
   .table {
     @apply border-collapse w-full;
   }
@@ -65,14 +93,26 @@
     @apply border-b-[1px] border-solid border-gray-200;
   }
 
+  .table tr th {
+    @apply py-3;
+  }
+
   .table tr td {
-    @apply py-1.5;
+    @apply py-1.5 lg:py-2;
+  }
+
+  .table-invoice tr td:nth-child(1) {
+    @apply font-medium;
   }
 }
 
 @layer utilities {
   .form-group {
     @apply flex flex-col gap-2;
+  }
+
+  .form-group input:has(+ p) {
+    @apply border-red-500 hover:border-red-600 focus:border-red-600;
   }
 
   .side-bar {

@@ -22,7 +22,7 @@
       </svg>
 
       <h1 class="text-[24px] font-bold text-dark self-center">
-        Select Customer
+        Select Product
       </h1>
     </div>
 
@@ -30,19 +30,19 @@
       <!-- Data Filter -->
       <DataFilter :date="false" :limiter="false" @change="setFilter" />
 
-      <!-- Customer List -->
+      <!-- Product List -->
       <div class="flex flex-col flex-grow justify-between gap-4">
-        <p v-if="$fetchState.pending">Fetching customers...</p>
+        <p v-if="$fetchState.pending">Fetching products...</p>
         <div
           v-else
-          v-for="customer in customers.data.result.data"
+          v-for="product in products.data.result.data"
           @click="
-            $emit('get-customer', customer)
+            $emit('get-product', product)
             $emit('close-modal')
           "
           class="cursor-pointer"
         >
-          <CardCustomer v-bind="customer" :key="customer.id" />
+          <CardProduct v-bind="product" :key="product.id" :date="true" />
         </div>
       </div>
     </form>
@@ -53,7 +53,7 @@
 export default {
   data() {
     return {
-      customers: [],
+      products: [],
       show: {
         search: null,
         date_start: null,
@@ -77,8 +77,8 @@ export default {
       }
     }
 
-    // Get customers
-    this.customers = await this.$axios.get('/customer', {
+    // Get products
+    this.products = await this.$axios.get('/product', {
       params: query_params,
     })
   },

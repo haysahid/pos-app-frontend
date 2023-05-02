@@ -1,11 +1,11 @@
 <template>
   <!-- Main -->
   <main
-    class="ml-[250px] max-lg:ml-[88px] max-md:ml-0 max-w-[100%] flex justify-center my-[60px] p-[24px] ease-in-out duration-200 max-md:flex-col"
+    class="ml-[220px] max-lg:ml-[88px] max-md:ml-0 max-w-[100%] flex justify-center my-[60px] p-[24px] ease-in-out duration-200 max-md:flex-col max-md:mb-[88px]"
   >
     <!-- Content -->
     <section
-      class="flex flex-row justify-between gap-6 flex-grow min-w-[360px] max-md:max-w-none items-start overflow-y-auto max-w-[600px]"
+      class="flex flex-row justify-between gap-6 flex-grow max-md:max-w-none items-start overflow-y-auto max-w-[600px]"
     >
       <div class="flex flex-col flex-grow gap-8">
         <!-- Headline -->
@@ -13,14 +13,31 @@
           <h1 class="text-[24px] font-bold text-dark self-center">
             Customer List
           </h1>
-          <button class="btn btn-primary self-center" @click="showForm(null)">
-            + Add Customer
+          <button
+            class="btn btn-primary self-center flex flex-row gap-1.5 items-center max-sm:p-[10px]"
+            @click="showForm(null)"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15"
+              />
+            </svg>
+            <p class="max-sm:hidden">Add Customer</p>
           </button>
         </div>
 
         <form @submit.prevent="$fetch" class="flex flex-col gap-4">
           <!-- Data Filter -->
-          <DataFilter :date="false" @change="setFilter" />
+          <DataFilter :date="false" :limiter="true" @change="setFilter" />
 
           <!-- Page Control -->
           <div
@@ -42,7 +59,7 @@
             <p class="self-center py-[10px]" v-if="$fetchState.pending">
               Loading...
             </p>
-            <p class="self-center text-grey-80 py-[10px]" v-else>
+            <p class="self-center text-[12px] text-grey-80 py-[10px]" v-else>
               {{
                 customers.data.result.data != 0
                   ? customers.data.result.to + 1 - customers.data.result.from
@@ -53,10 +70,8 @@
           </div>
 
           <!-- Customer List -->
-          <div
-            class="flex flex-col flex-grow justify-between gap-4"
-            :key="refreshData"
-          >
+          <div class="flex flex-col flex-grow justify-between gap-4">
+            <!-- Show Content -->
             <p v-if="$fetchState.pending">Fetching customers...</p>
             <div
               v-else
@@ -88,7 +103,7 @@
             <p class="self-center py-[10px]" v-if="$fetchState.pending">
               Loading...
             </p>
-            <p class="self-center text-grey-80 py-[10px]" v-else>
+            <p class="self-center text-[12px] text-grey-80 py-[10px]" v-else>
               {{
                 customers.data.result.data != 0
                   ? customers.data.result.to + 1 - customers.data.result.from
@@ -104,7 +119,7 @@
     <!-- Customer Form -->
     <aside class="w-[450px] max-md:w-full h-full bg-white" v-if="form"></aside>
     <aside
-      class="w-[450px] max-md:w-full max-md:pb-[100px] h-full fixed right-0 top-0 bg-white overflow-y-auto z-[899] shadow-lg pt-[56px]"
+      class="w-[450px] max-md:w-full pb-[100px] h-full fixed right-0 top-0 bg-white overflow-y-auto z-[899] shadow-lg pt-[56px]"
       v-if="form"
     >
       <FormCustomer class="" v-bind="edit" @close-form="closeForm" />
@@ -114,7 +129,7 @@
 
 <script>
 export default {
-  layout: 'dashboard',
+  layout: 'LayoutDashboard',
   middleware: 'auth',
   data() {
     return {
@@ -123,7 +138,6 @@ export default {
       edit: {
         customer_id: null,
       },
-      refresh: 0,
       show: {
         search: null,
         date_start: null,
@@ -165,19 +179,6 @@ export default {
       },
     })
   },
-  computed: {
-    // Refresh Data
-    refreshData() {
-      this.refresh = this.$store.state.refresh
-      return this.refresh
-    },
-  },
-  watch: {
-    // Re-Fetch Data
-    refresh() {
-      this.$fetch()
-    },
-  },
   methods: {
     // Show Form
     showForm(customer_id = null) {
@@ -207,6 +208,7 @@ export default {
       this.show.search = show.search
       this.show.date_start = show.date_start
       this.show.date_end = show.date_end
+      this.show.limit = show.limit
 
       this.$fetch()
     },

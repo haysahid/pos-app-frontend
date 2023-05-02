@@ -145,11 +145,11 @@
             class="input-field rounded-r-none flex-grow"
             placeholder="Total Weight"
           />
-          <p
+          <div
             class="rounded-r-[6px] outline outline-[1.45px] outline-grey-60 bg-grey-60 text-white py-[10px] px-[11px]"
           >
             Kg
-          </p>
+          </div>
         </div>
       </div>
 
@@ -164,8 +164,6 @@
 </template>
 
 <script>
-import CustomerForm from './CustomerForm.vue'
-
 export default {
   name: 'OrderForm',
   data() {
@@ -272,6 +270,5 @@ export default {
       })
     },
   },
-  components: { CustomerForm },
 }
 </script>

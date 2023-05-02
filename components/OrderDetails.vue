@@ -1,45 +1,52 @@
 <template>
-  <div class="overflow-y-auto flex flex-col min-w-[50%] h-full mb-[40px]">
+  <div class="overflow-y-auto flex flex-col min-w-[50%] h-full">
     <div class="flex flex-col gap-2">
-      <div class="w-full card p-[20px] flex-grow">
+      <!-- Card 1 -->
+      <section class="w-full card p-[20px] flex-grow">
         <div class="flex flex-col justify-between">
+          <!-- Summary -->
           <table class="text-grey-100">
             <tbody>
               <tr class="py-0">
                 <td class="w-[40%] align-top">Status</td>
-                <td class="">Waiting for payment</td>
+                <td class="font-bold">{{ status }}</td>
               </tr>
               <tr class="py-0">
                 <td class="w-[40%] align-top">Order ID</td>
-                <td class="">2</td>
+                <td class="">{{ order.id }}</td>
               </tr>
               <tr class="py-0">
                 <td class="w-[40%] align-top">Customer Type</td>
-                <td class="">Regular</td>
+                <td class="">{{ order.customer_type }}</td>
               </tr>
               <tr class="py-0">
                 <td class="w-[40%] align-top">Order Type</td>
-                <td class="">Pre-Order</td>
+                <td class="">{{ order.order_type }}</td>
               </tr>
               <tr class="py-0">
                 <td class="w-[40%] align-top">Date Created</td>
-                <td class="">19-03-2023 08:30</td>
+                <td class="">{{ order.created_at }}</td>
               </tr>
             </tbody>
           </table>
+
+          <!-- Customer -->
           <h1 class="text-[16px] font-bold text-dark pt-4 pb-2">Customer</h1>
-          <table class="text-grey-100">
+          <p v-if="!order.customer">Loading...</p>
+          <table class="text-grey-100" v-else>
             <tbody>
               <tr class="py-0">
                 <td class="w-[40%] align-top">Name</td>
-                <td class="">Bu Fulanah</td>
+                <td class="">{{ order.customer.name }}</td>
               </tr>
               <tr class="py-0">
                 <td class="w-[40%] align-top">Phone</td>
-                <td class="">081234567890</td>
+                <td class="">{{ order.customer.phone }}</td>
               </tr>
             </tbody>
           </table>
+
+          <!-- Delivery -->
           <h1 class="text-[16px] font-bold text-dark pt-4 pb-2">
             Delivery Details
           </h1>
@@ -48,83 +55,117 @@
               <tr class="py-0">
                 <td class="w-[40%] align-top">Address</td>
                 <td class="align-top">
-                  Jl. Ring Road Utara, Condongcatur, Sleman, DIY
+                  {{ order.address }}
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-      </div>
-      <div class="w-full card px-[20px] pt-[20px] pb-[14px] flex-grow">
+      </section>
+
+      <!-- Card 2 -->
+      <section class="w-full card px-[20px] pt-[20px] pb-[14px] flex-grow">
         <div class="flex flex-col justify-between">
+          <!-- Pricing -->
           <h1 class="text-[16px] font-bold text-dark pb-2">Pricing Details</h1>
-          <table class="table text-grey-100">
+          <p v-if="!order.order_items">Loading...</p>
+          <table
+            class="table text-grey-100"
+            v-else
+            v-for="item in order.order_items"
+          >
             <tbody>
               <tr class="table-divider">
                 <td class="w-[70%]">
-                  1 x Tas Branded dikirim langsung dari USA
+                  {{ item.quantity }} x
+                  {{ item.product.name }}
                 </td>
-                <td class="text-right">Rp 3.000.000</td>
+                <td class="text-right">
+                  {{ $toCurrencyString(countPrice(item.quantity, item.price)) }}
+                </td>
               </tr>
               <tr>
                 <td class="font-semibold">Sub Total</td>
-                <td class="text-right font-semibold">Rp 3.000.000</td>
+                <td class="text-right font-semibold">
+                  {{ $toCurrencyString(total_price) }}
+                </td>
               </tr>
               <tr class="table-divider">
                 <td class="">Shipping costs</td>
-                <td class="text-right">Rp 30.000</td>
+                <td class="text-right">
+                  {{ $toCurrencyString(order.shipping_costs) }}
+                </td>
               </tr>
             </tbody>
             <tfoot class="text-dark">
               <tr>
                 <td class="text-[16px] font-bold">Total Pricing</td>
-                <td class="text-right text-[16px] font-bold">Rp 3.000.000</td>
+                <td class="text-right text-[16px] font-bold">
+                  {{ $toCurrencyString(total_price) }}
+                </td>
               </tr>
             </tfoot>
           </table>
         </div>
-      </div>
-      <div class="w-full card px-[20px] pt-[20px] pb-[14px] flex-grow">
+      </section>
+
+      <!-- Card 3 -->
+      <section class="w-full card px-[20px] pt-[20px] pb-[14px] flex-grow">
         <div class="flex flex-col justify-between">
+          <!-- Payment Details -->
           <h1 class="text-[16px] font-bold text-dark pb-2">Payment Details</h1>
           <table class="table text-grey-100">
             <tbody>
-              <tr class="table-divider">
-                <td class="w-[40%]">25-04-2023 12:34</td>
-                <td class="w-[25%]">DP 50%</td>
-                <td class="text-right">Rp 3.000.000</td>
+              <tr v-if="!order.payments"></tr>
+              <tr
+                class="table-divider"
+                v-else
+                v-for="payment in order.payments"
+              >
+                <td class="w-[40%]">{{ payment.created_at }}</td>
+                <td class="w-[25%]">{{ payment.information }}</td>
+                <td class="text-right">
+                  {{ $toCurrencyString(payment.amount) }}
+                </td>
               </tr>
               <tr class="table-divider">
-                <td class="w-[40%]">25-04-2023 12:34</td>
-                <td class="w-[25%]">DP 50%</td>
-                <td class="text-right">Rp 3.000.000</td>
+                <td class="font-semibold">Total Paid</td>
+                <td></td>
+                <td class="text-right font-semibold">
+                  {{ $toCurrencyString(total_paid) }}
+                </td>
               </tr>
             </tbody>
             <tfoot class="text-dark">
               <tr>
                 <td class="text-[16px] font-bold">To Pay</td>
                 <td></td>
-                <td class="text-right text-[16px] font-bold">Rp 3.000.000</td>
+                <td class="text-right text-[16px] font-bold">
+                  {{ $toCurrencyString(to_pay) }}
+                </td>
               </tr>
             </tfoot>
           </table>
         </div>
-      </div>
+      </section>
     </div>
-    <div class="flex flex-row mt-2 w-full justify-between">
-      <div class="flex flex-row w-full gap-4">
-        <a href="index.html" class="btn btn-primary mt-[14px] self-start">
-          + Add Payment
-        </a>
-        <a href="index.html" class="btn btn-danger mt-[14px] self-start">
-          Refund
-        </a>
-      </div>
-      <button class="btn btn-secondary mt-[14px] shrink-0">Create Invoice</button>
-    </div>
-
-    <!-- <button type="button" class="w-full btn btn-primary mt-[14px]">
-              Sign In
-          </button> -->
   </div>
 </template>
+
+<script>
+export default {
+  props: {
+    order: [],
+    total_price: 0,
+    total_paid: 0,
+    to_pay: 0,
+    status: null,
+  },
+  methods: {
+    // Count Price
+    countPrice(quantity, price) {
+      return quantity * price
+    },
+  },
+}
+</script>

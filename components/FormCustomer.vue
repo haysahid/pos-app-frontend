@@ -65,6 +65,7 @@
           class="btn btn-danger self-end"
           type="button"
           @click="deleteCustomer"
+          v-if="customer_id"
         >
           Delete
         </button>
@@ -126,6 +127,10 @@ export default {
 
         try {
           let response = await this.$axios.post('/customer', data)
+
+          // Passing Value
+          let customer = response.data.result.customer
+          this.$emit('get-customer', customer)
         } catch (error) {
           console.log(error.message)
         }
@@ -160,7 +165,7 @@ export default {
 
     // Delete Customer
     async deleteCustomer() {
-      await this.$axios.delete(`/product/${this.customer_id}`)
+      await this.$axios.delete(`/customer/${this.customer_id}`)
 
       this.customer_id = null
       this.$emit('close-form')
@@ -169,7 +174,7 @@ export default {
 
     // Refresh Data
     refreshData() {
-      this.$store.commit('refreshData')
+      this.$nuxt.refresh()
     },
   },
 }

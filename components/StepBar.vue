@@ -10,11 +10,13 @@
       </div>
       <div class="block relative w-[75%] top-[-23px] self-center">
         <div class="h-0.5 bg-grey-40 z-8"></div>
-        <div class="block relative top-[-2px] w-1/3 h-0.5 bg-green-500 z-9"></div>
+        <div
+          class="block relative top-[-2px] w-1/3 h-0.5 bg-green-500 z-9"
+        ></div>
       </div>
     </div>
 
-    <div class="flex content-center text-center text-dark">
+    <div class="flex content-center text-center text-dark max-sm:text-[12px]">
       <div class="w-1/4">Order</div>
       <div class="w-1/4">Importing</div>
       <div class="w-1/4">Repayment</div>

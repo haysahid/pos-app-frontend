@@ -3,7 +3,7 @@
     <img
       :src="image_path + image"
       :alt="name"
-      class="w-[100px] rounded-[6px] object-cover aspect-square"
+      class="w-[100px] h-[100px] rounded-[6px] object-cover aspect-square"
     />
     <div class="flex flex-col flex-grow">
       <p class="font-medium text-grey-80 text-[14px] mb-1">{{ brand.name }}</p>
@@ -20,9 +20,9 @@
             >{{ category.name }}</span
           >
         </div>
-        <span class="text-grey-40 text-[12px]"
-          >{{ created_at }}</span
-        >
+        <span class="text-grey-40 text-[12px] line-clamp-1" v-show="date">{{
+          created_at
+        }}</span>
       </div>
     </div>
   </div>
@@ -40,6 +40,8 @@ export default {
     category: [],
     created_at: String,
     updated_at: String,
+    date: true,
+    sold: null,
   },
   data() {
     return {
