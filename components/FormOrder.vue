@@ -202,8 +202,8 @@ export default {
     }
   },
   async fetch() {
-    this.customers = await this.$axios.get('/customer')
-    this.products = await this.$axios.get('/product')
+    this.customers = await this.$axios.get('/api/customer')
+    this.products = await this.$axios.get('/api/product')
   },
   methods: {
     async selectCustomer(event) {

@@ -5,7 +5,7 @@
   >
     <!-- Content -->
     <section
-      class="flex flex-row justify-between gap-6 flex-grow max-md:max-w-none items-start overflow-y-auto max-w-[600px]"
+      class="flex flex-row justify-between gap-6 flex-grow max-md:max-w-none items-start overflow-y-auto max-w-[640px]"
     >
       <div class="flex flex-col flex-grow gap-8">
         <!-- Headline -->
@@ -185,7 +185,7 @@ export default {
         search: null,
         date_start: null,
         date_end: null,
-        limit: 25,
+        limit: 10,
         page: null,
         status: '',
         pre_order: true,
@@ -210,7 +210,7 @@ export default {
     }
 
     // Get orders
-    this.orders = await this.$axios.get('/order', {
+    this.orders = await this.$axios.get('/api/order', {
       params: query_params,
     })
 

@@ -5,12 +5,12 @@
   >
     <!-- Content -->
     <section
-      class="flex flex-row justify-between gap-6 flex-grow max-md:max-w-none items-start overflow-y-auto max-w-[600px]"
+      class="flex flex-row justify-between gap-6 flex-grow max-md:max-w-none items-start overflow-y-auto max-w-[640px]"
     >
       <div class="flex flex-col flex-grow gap-8">
         <!-- Headline -->
         <div class="flex justify-between">
-          <h1 class="text-[24px] font-bold text-dark self-center">
+          <h1 class="text-[24px] font-bold text-dark self-center py-1">
             Customer List
           </h1>
           <button
@@ -162,7 +162,7 @@ export default {
     }
 
     // Get customers
-    this.customers = await this.$axios.get('/customer', {
+    this.customers = await this.$axios.get('/api/customer', {
       params: query_params,
     })
 

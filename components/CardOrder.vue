@@ -7,7 +7,7 @@
       class="flex flex-col justify-between gap-2 w-[50%] max-sm:flex-row max-sm:gap-4 max-sm:w-full"
     >
       <div class="flex flex-col gap-2">
-        <div class="font-bold text-dark text-[16px]">
+        <div class="font-semibold text-dark text-[16px]">
           {{ customer.name }}
         </div>
 
@@ -80,22 +80,29 @@
 
     <!-- Order Item -->
     <div class="flex flex-row gap-4 w-full">
+      <div
+        class="w-[100px] h-[100px] rounded-[6px] flex justify-center items-center bg-page"
+        v-if="!order_items[0]?.product.image"
+      >
+        <EmptyImage />
+      </div>
       <img
-        :src="image_path + order_items[0]?.product.image"
+        :src="imgUrl + order_items[0]?.product.image"
         alt=""
         class="w-[100px] h-[100px] rounded-[6px] object-cover aspect-square"
+        v-else
       />
       <div class="flex flex-col flex-grow justify-between">
         <div>
           <!-- Brand Name -->
           <div class="flex justify-between">
-            <p class="font-medium text-grey-80 text-[14px] mb-1">
+            <p class="text-grey-80 text-[14px] mb-1">
               {{ order_items[0].product.brand.name }}
             </p>
           </div>
 
           <!-- Product Name -->
-          <div class="font-bold text-dark text-[16px] mb-1 line-clamp-1">
+          <div class="font-medium text-dark text-[16px] mb-1 line-clamp-1">
             {{ order_items[0].quantity + ' x ' + order_items[0].product.name }}
           </div>
 
@@ -161,7 +168,7 @@ export default {
   },
   data() {
     return {
-      image_path: 'http://localhost:8000/storage/',
+      imgUrl: process.env.imgUrl,
     }
   },
   computed: {

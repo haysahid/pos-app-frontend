@@ -9,7 +9,9 @@
       <div class="flex flex-col flex-grow gap-8">
         <!-- Title -->
         <div class="flex justify-between">
-          <h1 class="text-[24px] font-bold text-dark self-center">Settings</h1>
+          <h1 class="text-[24px] font-bold text-dark self-center py-1">
+            Settings
+          </h1>
         </div>
 
         <!-- Preferences -->
@@ -52,7 +54,7 @@
             >
               <img
                 :src="
-                  preview_image ? preview_image : image_path + settings.app_logo
+                  preview_image ? preview_image : imgUrl + settings.app_logo
                 "
                 alt=""
                 class="w-[100px] rounded-[6px] object-cover aspect-square self-center"
@@ -134,7 +136,7 @@
         </form>
 
         <!-- Brands -->
-        <div class="flex flex-col card form-container">
+        <div class="flex flex-col card form-container max-h-[600px]">
           <!-- Headline -->
           <div class="flex justify-between items-center">
             <h2 class="text-[20px] font-bold text-dark">Brands</h2>
@@ -161,54 +163,56 @@
             </button>
           </div>
 
-          <table class="table text-grey-100 divide-y divide-gray-200">
-            <thead>
-              <tr class="text-left">
-                <th class="pl-4 w-[50px]">ID</th>
-                <th class="pr-4">Name</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <tr v-if="$fetchState.pending">
-                <td>Loading...</td>
-                <td></td>
-              </tr>
-              <tr
-                class="hover:bg-secondary"
-                v-else
-                v-for="brand in listBrand"
-                :key="brand.id"
-              >
-                <td class="pl-4">{{ brand.id }}</td>
-                <td class="flex justify-between items-center pr-4">
-                  <p>{{ brand.name }}</p>
-                  <button
-                    type="button"
-                    class="p-2"
-                    @click="showModal('brandForm', brand.id)"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      class="w-5 h-5 fill-grey-60 hover:fill-grey-80"
+          <div class="overflow-y-auto">
+            <table class="table text-grey-100 divide-y divide-gray-200">
+              <thead>
+                <tr class="text-left">
+                  <th class="pl-4 w-[50px]">ID</th>
+                  <th class="pr-4">Name</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr v-if="$fetchState.pending">
+                  <td>Loading...</td>
+                  <td></td>
+                </tr>
+                <tr
+                  class="hover:bg-secondary"
+                  v-else
+                  v-for="brand in listBrand"
+                  :key="brand.id"
+                >
+                  <td class="pl-4">{{ brand.id }}</td>
+                  <td class="flex justify-between items-center pr-4">
+                    <p>{{ brand.name }}</p>
+                    <button
+                      type="button"
+                      class="p-2"
+                      @click="showModal('brandForm', brand.id)"
                     >
-                      <path
-                        d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z"
-                      />
-                      <path
-                        d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z"
-                      />
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        class="w-5 h-5 fill-grey-60 hover:fill-grey-80"
+                      >
+                        <path
+                          d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z"
+                        />
+                        <path
+                          d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z"
+                        />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Warehouses -->
-        <div class="flex flex-col card form-container">
+        <div class="flex flex-col card form-container max-h-[600px]">
           <!-- Headline -->
           <div class="flex justify-between items-center">
             <h2 class="text-[20px] font-bold text-dark">Warehouses</h2>
@@ -235,58 +239,60 @@
             </button>
           </div>
 
-          <table class="table text-grey-100 divide-y divide-gray-200">
-            <thead>
-              <tr class="table-divider text-left">
-                <th class="pl-4 w-[50px]">ID</th>
-                <th class="pr-4">Name</th>
-                <th>Address</th>
-                <th>Phone</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <tr v-if="$fetchState.pending">
-                <td>Loading...</td>
-                <td></td>
-              </tr>
-              <tr
-                class="hover:bg-secondary"
-                v-else
-                v-for="warehouse in listWarehouse"
-                :key="warehouse.id"
-              >
-                <td class="pl-4">{{ warehouse.id }}</td>
-                <td>{{ warehouse.name }}</td>
-                <td>{{ warehouse.address }}</td>
-                <td class="flex justify-between items-center pr-4">
-                  <p>{{ warehouse.phone }}</p>
-                  <button
-                    type="button"
-                    class="p-2"
-                    @click="showModal('warehouseForm', warehouse.id)"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      class="w-5 h-5 fill-grey-60 hover:fill-grey-80"
+          <div class="overflow-y-auto">
+            <table class="table text-grey-100 divide-y divide-gray-200">
+              <thead>
+                <tr class="table-divider text-left">
+                  <th class="pl-4 w-[50px]">ID</th>
+                  <th class="pr-4">Name</th>
+                  <th>Address</th>
+                  <th>Phone</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr v-if="$fetchState.pending">
+                  <td>Loading...</td>
+                  <td></td>
+                </tr>
+                <tr
+                  class="hover:bg-secondary"
+                  v-else
+                  v-for="warehouse in listWarehouse"
+                  :key="warehouse.id"
+                >
+                  <td class="pl-4">{{ warehouse.id }}</td>
+                  <td>{{ warehouse.name }}</td>
+                  <td>{{ warehouse.address }}</td>
+                  <td class="flex justify-between items-center pr-4">
+                    <p>{{ warehouse.phone }}</p>
+                    <button
+                      type="button"
+                      class="p-2"
+                      @click="showModal('warehouseForm', warehouse.id)"
                     >
-                      <path
-                        d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z"
-                      />
-                      <path
-                        d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z"
-                      />
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        class="w-5 h-5 fill-grey-60 hover:fill-grey-80"
+                      >
+                        <path
+                          d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z"
+                        />
+                        <path
+                          d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z"
+                        />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Categories -->
-        <div class="flex flex-col card form-container">
+        <div class="flex flex-col card form-container max-h-[600px]">
           <!-- Headline -->
           <div class="flex justify-between items-center">
             <h2 class="text-[20px] font-bold text-dark">Categories</h2>
@@ -313,54 +319,56 @@
             </button>
           </div>
 
-          <table class="table text-grey-100 divide-y divide-gray-200">
-            <thead>
-              <tr class="table-divider text-left">
-                <th class="pl-4 w-[50px]">ID</th>
-                <th class="pr-4">Name</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <tr v-if="$fetchState.pending">
-                <td>Loading...</td>
-                <td></td>
-              </tr>
-              <tr
-                class="hover:bg-secondary"
-                v-else
-                v-for="category in listCategory"
-                :key="category.id"
-              >
-                <td class="pl-4">{{ category.id }}</td>
-                <td class="flex justify-between items-center pr-4">
-                  <p>{{ category.name }}</p>
-                  <button
-                    type="button"
-                    class="p-2"
-                    @click="showModal('categoryForm', category.id)"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      class="w-5 h-5 fill-grey-60 hover:fill-grey-80"
+          <div class="overflow-y-auto">
+            <table class="table text-grey-100 divide-y divide-gray-200">
+              <thead>
+                <tr class="table-divider text-left">
+                  <th class="pl-4 w-[50px]">ID</th>
+                  <th class="pr-4">Name</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr v-if="$fetchState.pending">
+                  <td>Loading...</td>
+                  <td></td>
+                </tr>
+                <tr
+                  class="hover:bg-secondary"
+                  v-else
+                  v-for="category in listCategory"
+                  :key="category.id"
+                >
+                  <td class="pl-4">{{ category.id }}</td>
+                  <td class="flex justify-between items-center pr-4">
+                    <p>{{ category.name }}</p>
+                    <button
+                      type="button"
+                      class="p-2"
+                      @click="showModal('categoryForm', category.id)"
                     >
-                      <path
-                        d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z"
-                      />
-                      <path
-                        d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z"
-                      />
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        class="w-5 h-5 fill-grey-60 hover:fill-grey-80"
+                      >
+                        <path
+                          d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z"
+                        />
+                        <path
+                          d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z"
+                        />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Payment Account -->
-        <div class="flex flex-col card form-container overflow-x-auto">
+        <div class="flex flex-col card form-container max-h-[600px]">
           <!-- Headline -->
           <div class="flex justify-between items-center">
             <h2 class="text-[20px] font-bold text-dark">Payment Accounts</h2>
@@ -387,42 +395,46 @@
             </button>
           </div>
 
-          <div class="flex flex-col gap-4">
-            <div v-if="$fetchState.pending">Loading...</div>
-            <div
-              class="flex flex-row border-[1.5px] border-grey-40 hover:border-grey-60 rounded-lg items-center gap-4 flex-grow p-[16px] justify-between"
-              v-else
-              v-for="payment_account in listPaymentMethod"
-              :key="payment_account.id"
-            >
-              <div class="flex flex-col gap-1">
-                <p class="text-grey-80">{{ payment_account.method }}</p>
-                <div class="font-bold text-dark text-[16px] mb-2 line-clamp-1">
-                  {{ payment_account.account_name }}
-                </div>
-                <p class="text-grey-60 line-clamp-1">
-                  {{ payment_account.number }}
-                </p>
-              </div>
-              <button
-                type="button"
-                class="p-2"
-                @click="showModal('paymentAccountForm', payment_account.id)"
+          <div class="overflow-y-auto">
+            <div class="flex flex-col gap-4">
+              <div v-if="$fetchState.pending">Loading...</div>
+              <div
+                class="flex flex-row border-[1.5px] border-grey-40 hover:border-grey-60 rounded-lg items-center gap-4 flex-grow p-[16px] justify-between"
+                v-else
+                v-for="payment_account in listPaymentMethod"
+                :key="payment_account.id"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="w-5 h-5 fill-grey-60 hover:fill-grey-80"
+                <div class="flex flex-col gap-1">
+                  <p class="text-grey-80">{{ payment_account.method }}</p>
+                  <div
+                    class="font-bold text-dark text-[16px] mb-2 line-clamp-1"
+                  >
+                    {{ payment_account.account_name }}
+                  </div>
+                  <p class="text-grey-60 line-clamp-1">
+                    {{ payment_account.number }}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  class="p-2"
+                  @click="showModal('paymentAccountForm', payment_account.id)"
                 >
-                  <path
-                    d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z"
-                  />
-                  <path
-                    d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z"
-                  />
-                </svg>
-              </button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    class="w-5 h-5 fill-grey-60 hover:fill-grey-80"
+                  >
+                    <path
+                      d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z"
+                    />
+                    <path
+                      d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -477,9 +489,9 @@ export default {
   middleware: 'superadmin',
   data() {
     return {
+      imgUrl: process.env.imgUrl,
       modal: false,
       modal_type: null,
-      image_path: 'http://localhost:8000/storage/',
       brands: [],
       warehouses: [],
       categories: [],
@@ -511,16 +523,16 @@ export default {
     this.settings.app_logo = this.$store.state.settings.app_logo
 
     // Get Brands
-    this.brands = await this.$axios.get('/brand')
+    this.brands = await this.$axios.get('/api/brand')
 
     // Get Warehouses
-    this.warehouses = await this.$axios.get('/warehouse')
+    this.warehouses = await this.$axios.get('/api/warehouse')
 
     // Get Categories
-    this.categories = await this.$axios.get('/category')
+    this.categories = await this.$axios.get('/api/category')
 
     // Get Payment Accounts
-    this.payment_accounts = await this.$axios.get('/payment_account')
+    this.payment_accounts = await this.$axios.get('/api/payment_account')
   },
   computed: {
     listBrand() {
@@ -534,7 +546,7 @@ export default {
     },
     listPaymentMethod() {
       return this.payment_accounts.data.result.filter(
-        (item) => item.method != 'Refund'
+        (item) => item.method != 'REFUND'
       )
     },
   },
@@ -566,7 +578,7 @@ export default {
           data.append('_method', 'PUT')
 
           try {
-            let response = await this.$axios.post('/setting/1', data, {
+            let response = await this.$axios.post('/api/setting/1', data, {
               'content-type': 'multipart/form-data',
             })
           } catch (error) {

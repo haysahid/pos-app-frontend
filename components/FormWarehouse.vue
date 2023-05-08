@@ -21,6 +21,11 @@
           placeholder="Warehouse Name"
           v-model="warehouse.name"
         />
+
+        <!-- Validation -->
+        <p class="text-red-500 text-xs italic" v-if="validation.name">
+          {{ validation.name[0] }}
+        </p>
       </div>
 
       <!-- Warehouse Address -->
@@ -63,14 +68,14 @@
             Cancel
           </button>
         </div>
-        <button
+        <!-- <button
           class="btn btn-danger"
           type="button"
           @click="deleteWarehouse"
           v-if="warehouse_id"
         >
           Delete
-        </button>
+        </button> -->
       </div>
     </form>
   </div>
@@ -89,13 +94,16 @@ export default {
         address: null,
         phone: null,
       },
+
+      // Validation
+      validation: [],
     }
   },
   async fetch() {
     if (this.warehouse_id) {
       // For Edit
       this.warehouse_edit = await this.$axios.get(
-        `/warehouse/${this.warehouse_id}`
+        `/api/warehouse/${this.warehouse_id}`
       )
 
       this.warehouse.name = this.warehouse_edit.data.result.warehouse.name
@@ -126,13 +134,18 @@ export default {
         }
 
         try {
-          let response = await this.$axios.post('/warehouse', data)
+          let response = await this.$axios.post('/api/warehouse', data)
 
           // Passing Value
           let warehouse = response.data.result.warehouse
           this.$emit('get-warehouse', warehouse)
+
+          this.warehouse_id = null
+          this.$emit('close-form')
+          this.refreshData()
         } catch (error) {
-          console.log(error.message)
+          const validation = error.response.data.errors
+          this.validation = validation
         }
       }
 
@@ -150,22 +163,23 @@ export default {
 
         try {
           let response = await this.$axios.put(
-            `/warehouse/${this.warehouse_id}`,
+            `/api/warehouse/${this.warehouse_id}`,
             data
           )
+
+          this.warehouse_id = null
+          this.$emit('close-form')
+          this.refreshData()
         } catch (error) {
-          console.log(error.message)
+          const validation = error.response.data.errors
+          this.validation = validation
         }
       }
-
-      this.warehouse_id = null
-      this.$emit('close-form')
-      this.refreshData()
     },
 
     // Delete Warehouse
     async deleteWarehouse() {
-      await this.$axios.delete(`/warehouse/${this.warehouse_id}`)
+      await this.$axios.delete(`/api/warehouse/${this.warehouse_id}`)
 
       this.warehouse_id = null
       this.$emit('close-form')

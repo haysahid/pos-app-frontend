@@ -78,7 +78,7 @@ export default {
     }
 
     // Get customers
-    this.customers = await this.$axios.get('/customer', {
+    this.customers = await this.$axios.get('/api/customer', {
       params: query_params,
     })
   },

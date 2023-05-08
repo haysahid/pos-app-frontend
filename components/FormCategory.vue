@@ -21,6 +21,11 @@
           placeholder="Category Name"
           v-model="category.name"
         />
+
+        <!-- Validation -->
+        <p class="text-red-500 text-xs italic" v-if="validation.name">
+          {{ validation.name[0] }}
+        </p>
       </div>
 
       <!-- Button -->
@@ -42,14 +47,14 @@
             Cancel
           </button>
         </div>
-        <button
+        <!-- <button
           class="btn btn-danger"
           type="button"
           @click="deleteCategory"
           v-if="category_id"
         >
           Delete
-        </button>
+        </button> -->
       </div>
     </form>
   </div>
@@ -66,13 +71,16 @@ export default {
       category: {
         name: null,
       },
+
+      // Validation
+      validation: [],
     }
   },
   async fetch() {
     if (this.category_id) {
       // For Edit
       this.category_edit = await this.$axios.get(
-        `/category/${this.category_id}`
+        `/api/category/${this.category_id}`
       )
 
       this.category.name = this.category_edit.data.result.category.name
@@ -101,13 +109,18 @@ export default {
         }
 
         try {
-          let response = await this.$axios.post('/category', data)
+          let response = await this.$axios.post('/api/category', data)
 
           // Passing Value
           let category = response.data.result.category
           this.$emit('get-category', category)
+
+          this.category_id = null
+          this.$emit('close-form')
+          this.refreshData()
         } catch (error) {
-          console.log(error.message)
+          const validation = error.response.data.errors
+          this.validation = validation
         }
       }
 
@@ -122,22 +135,23 @@ export default {
 
         try {
           let response = await this.$axios.put(
-            `/category/${this.category_id}`,
+            `/api/category/${this.category_id}`,
             data
           )
+
+          this.category_id = null
+          this.$emit('close-form')
+          this.refreshData()
         } catch (error) {
-          console.log(error.message)
+          const validation = error.response.data.errors
+          this.validation = validation
         }
       }
-
-      this.category_id = null
-      this.$emit('close-form')
-      this.refreshData()
     },
 
     // Delete Category
     async deleteCategory() {
-      await this.$axios.delete(`/category/${this.category_id}`)
+      await this.$axios.delete(`/api/category/${this.category_id}`)
 
       this.category_id = null
       this.$emit('close-form')

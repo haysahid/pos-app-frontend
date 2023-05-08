@@ -78,7 +78,7 @@ export default {
     }
 
     // Get products
-    this.products = await this.$axios.get('/product', {
+    this.products = await this.$axios.get('/api/product', {
       params: query_params,
     })
   },

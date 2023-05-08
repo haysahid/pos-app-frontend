@@ -70,34 +70,38 @@
           <h1 class="text-[16px] font-bold text-dark pb-2">Pricing Details</h1>
           <p v-if="!order.order_items">Loading...</p>
           <table
-            class="table text-grey-100"
+            class="table text-grey-100 divide-y divide-gray-200"
             v-else
             v-for="item in order.order_items"
           >
-            <tbody>
-              <tr class="table-divider">
-                <td class="w-[70%]">
-                  {{ item.quantity }} x
-                  {{ item.product.name }}
+            <tbody class="divide-y divide-gray-200">
+              <tr class="">
+                <td class="flex flex-col gap-1 w-[70%]">
+                  <div>
+                    {{ item.quantity + ' x ' + item.product.name }}
+                  </div>
+                  <div class="">
+                    {{ item.color }}
+                  </div>
                 </td>
                 <td class="text-right">
                   {{ $toCurrencyString(countPrice(item.quantity, item.price)) }}
                 </td>
               </tr>
+            </tbody>
+            <tfoot class="text-dark">
               <tr>
                 <td class="font-semibold">Sub Total</td>
                 <td class="text-right font-semibold">
-                  {{ $toCurrencyString(total_price) }}
+                  {{ $toCurrencyString(total_price - order.shipping_costs) }}
                 </td>
               </tr>
-              <tr class="table-divider">
+              <tr class="">
                 <td class="">Shipping costs</td>
                 <td class="text-right">
                   {{ $toCurrencyString(order.shipping_costs) }}
                 </td>
               </tr>
-            </tbody>
-            <tfoot class="text-dark">
               <tr>
                 <td class="text-[16px] font-bold">Total Pricing</td>
                 <td class="text-right text-[16px] font-bold">
@@ -114,11 +118,11 @@
         <div class="flex flex-col justify-between">
           <!-- Payment Details -->
           <h1 class="text-[16px] font-bold text-dark pb-2">Payment Details</h1>
-          <table class="table text-grey-100">
-            <tbody>
+          <table class="table text-grey-100 divide-y divide-gray-200">
+            <tbody class="divide-y divide-gray-200">
               <tr v-if="!order.payments"></tr>
               <tr
-                class="table-divider"
+                class=""
                 v-else
                 v-for="payment in order.payments"
               >
@@ -128,7 +132,7 @@
                   {{ $toCurrencyString(payment.amount) }}
                 </td>
               </tr>
-              <tr class="table-divider">
+              <tr class="">
                 <td class="font-semibold">Total Paid</td>
                 <td></td>
                 <td class="text-right font-semibold">

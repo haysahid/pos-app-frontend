@@ -14,13 +14,18 @@
 
       <!-- Full Name -->
       <div class="form-group">
-        <label for="" class="input-label">Full Name*</label>
+        <label for="" class="input-label required">Full Name</label>
         <input
           type="text"
           class="input-field"
           placeholder="Full Name"
           v-model="customer.name"
         />
+
+        <!-- Validation -->
+        <p class="text-red-500 text-xs italic" v-if="validation.errors?.name">
+          {{ validation.errors?.name[0] }}
+        </p>
       </div>
 
       <!-- Address -->
@@ -35,7 +40,7 @@
 
       <!-- Phone -->
       <div class="form-group">
-        <label for="" class="input-label">Phone*</label>
+        <label for="" class="input-label">Phone</label>
         <input
           type="text"
           class="input-field"
@@ -87,13 +92,16 @@ export default {
         address: null,
         phone: null,
       },
+
+      // Validation
+      validation: [],
     }
   },
   async fetch() {
     if (this.customer_id) {
       // For Edit
       this.customer_edit = await this.$axios.get(
-        `/customer/${this.customer_id}`
+        `/api/customer/${this.customer_id}`
       )
 
       this.customer.name = this.customer_edit.data.result.customer.name
@@ -126,13 +134,17 @@ export default {
         }
 
         try {
-          let response = await this.$axios.post('/customer', data)
+          let response = await this.$axios.post('/api/customer', data)
 
           // Passing Value
           let customer = response.data.result.customer
           this.$emit('get-customer', customer)
+
+          this.customer_id = null
+          this.$emit('close-form')
+          this.refreshData()
         } catch (error) {
-          console.log(error.message)
+          this.validation = error.response.data
         }
       }
 
@@ -150,22 +162,22 @@ export default {
 
         try {
           let response = await this.$axios.put(
-            `/customer/${this.customer_id}`,
+            `/api/customer/${this.customer_id}`,
             data
           )
+
+          this.customer_id = null
+          this.$emit('close-form')
+          this.refreshData()
         } catch (error) {
-          console.log(error.message)
+          this.validation = error.response.data
         }
       }
-
-      this.customer_id = null
-      this.$emit('close-form')
-      this.refreshData()
     },
 
     // Delete Customer
     async deleteCustomer() {
-      await this.$axios.delete(`/customer/${this.customer_id}`)
+      await this.$axios.delete(`/api/customer/${this.customer_id}`)
 
       this.customer_id = null
       this.$emit('close-form')

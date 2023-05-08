@@ -111,7 +111,9 @@
     @apply flex flex-col gap-2;
   }
 
-  .form-group input:has(+ p) {
+  .form-group input:has(+ p),
+  .form-group .input-field:has(+ p),
+  .form-group textarea:has(+ p) {
     @apply border-red-500 hover:border-red-600 focus:border-red-600;
   }
 

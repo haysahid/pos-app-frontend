@@ -21,6 +21,11 @@
           placeholder="Method"
           v-model="payment_account.method"
         />
+
+        <!-- Validation -->
+        <p class="text-red-500 text-xs italic" v-if="validation.method">
+          {{ validation.method[0] }}
+        </p>
       </div>
 
       <!-- Account Name -->
@@ -32,6 +37,11 @@
           placeholder="Account Name"
           v-model="payment_account.account_name"
         />
+
+        <!-- Validation -->
+        <p class="text-red-500 text-xs italic" v-if="validation.account_name">
+          {{ validation.account_name[0] }}
+        </p>
       </div>
 
       <!-- Number -->
@@ -43,6 +53,11 @@
           placeholder="Number"
           v-model="payment_account.number"
         />
+
+        <!-- Validation -->
+        <p class="text-red-500 text-xs italic" v-if="validation.number">
+          {{ validation.number[0] }}
+        </p>
       </div>
 
       <!-- Button -->
@@ -64,14 +79,14 @@
             Cancel
           </button>
         </div>
-        <button
+        <!-- <button
           class="btn btn-danger"
           type="button"
           @click="deletePaymentAccount"
           v-if="payment_account_id"
         >
           Delete
-        </button>
+        </button> -->
       </div>
     </form>
   </div>
@@ -90,13 +105,16 @@ export default {
         account_name: null,
         number: null,
       },
+
+      // Validation
+      validation: [],
     }
   },
   async fetch() {
     if (this.payment_account_id) {
       // For Edit
       this.payment_account_edit = await this.$axios.get(
-        `/payment_account/${this.payment_account_id}`
+        `/api/payment_account/${this.payment_account_id}`
       )
 
       this.payment_account.method =
@@ -132,13 +150,18 @@ export default {
         }
 
         try {
-          let response = await this.$axios.post('/payment_account', data)
+          let response = await this.$axios.post('/api/payment_account', data)
 
           // Passing Value
           let payment_account = response.data.result.payment_account
           this.$emit('get-payment_account', payment_account)
+
+          this.payment_account_id = null
+          this.$emit('close-form')
+          this.refreshData()
         } catch (error) {
-          console.log(error.message)
+          const validation = error.response.data.errors
+          this.validation = validation
         }
       }
 
@@ -153,22 +176,23 @@ export default {
 
         try {
           let response = await this.$axios.put(
-            `/payment_account/${this.payment_account_id}`,
+            `/api/payment_account/${this.payment_account_id}`,
             data
           )
+
+          this.payment_account_id = null
+          this.$emit('close-form')
+          this.refreshData()
         } catch (error) {
-          console.log(error.message)
+          const validation = error.response.data.errors
+          this.validation = validation
         }
       }
-
-      this.payment_account_id = null
-      this.$emit('close-form')
-      this.refreshData()
     },
 
     // Delete Payment Account
     async deletePaymentAccount() {
-      await this.$axios.delete(`/payment_account/${this.payment_account_id}`)
+      await this.$axios.delete(`/api/payment_account/${this.payment_account_id}`)
 
       this.payment_account_id = null
       this.$emit('close-form')

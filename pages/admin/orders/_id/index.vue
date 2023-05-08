@@ -27,7 +27,7 @@
             </button>
 
             <h1
-              class="text-[24px] font-bold text-dark self-center line-clamp-1"
+              class="text-[24px] font-bold text-dark self-center py-1 line-clamp-1"
             >
               Order Details
             </h1>
@@ -61,12 +61,13 @@
                     Refund
                   </button>
                 </div>
-                <NuxtLink
-                  :to="{ name: 'admin-orders-id-invoice' }"
+                <button
+                  type="button"
                   class="btn btn-secondary shrink-0"
+                  @click="$router.push({ name: 'admin-orders-id-invoice' })"
                 >
                   Create Invoice
-                </NuxtLink>
+                </button>
               </div>
             </div>
           </div>
@@ -136,7 +137,7 @@
                           </div>
                           <input
                             type="text"
-                            class="input-field rounded-l-none flex-grow min-w-0"
+                            class="input-field rounded-l-none flex-grow min-w-0 text-right"
                             placeholder="-"
                             @input="priceToCurreny"
                             v-model="edit_order.order_items[0].price"
@@ -215,7 +216,7 @@
                   </div>
                   <input
                     type="text"
-                    class="input-field rounded-l-none flex-grow min-w-0"
+                    class="input-field rounded-l-none flex-grow min-w-0 text-right"
                     placeholder="-"
                     @input="shippingCostsToCurreny"
                     v-model="edit_order.order.shipping_costs"
@@ -329,7 +330,7 @@ export default {
   async fetch() {
     this.order_id = this.$route.params.id
 
-    const response = await this.$axios.get(`/order/${this.order_id}`)
+    const response = await this.$axios.get(`/api/order/${this.order_id}`)
 
     this.details.order = response.data.result.order
 
@@ -361,71 +362,14 @@ export default {
       this.details.order.order_items[0].quantity
 
     this.product = await this.$axios.get(
-      `/product/${this.edit_order.order_items[0].product_id}`
+      `/api/product/${this.edit_order.order_items[0].product_id}`
     )
 
-    // Count Total Price
-    this.details.total_price = 0
+    // Get Details
+    this.getDetails(this.details.order)
 
-    for (let item of this.details.order.order_items) {
-      this.details.total_price += parseInt(item.quantity * item.price)
-    }
-
-    this.details.total_price = parseInt(
-      this.details.total_price + this.details.order.shipping_costs
-    )
-
-    // Count Paid
-    this.details.total_paid = 0
-
-    for (let payment of this.details.order.payments) {
-      this.details.total_paid += parseInt(payment.amount)
-    }
-
-    // To Pay
-    this.details.to_pay = 0
-
-    this.details.to_pay = this.details.total_price - this.details.total_paid
-
-    // Status
-
-    // Is order success? Yes
-    if (
-      this.details.order.availability == 1 &&
-      this.details.total_paid == this.details.total_price
-    ) {
-      this.details.status = 'Success'
-    }
-
-    // Is product availability known? Nope
-    else if (this.details.order.availability == null) {
-      this.details.status = 'Waiting for Availability'
-    }
-
-    // Product available, but it is paid off? Not yet
-    else if (
-      this.details.order.availability == 1 &&
-      this.details.total_paid < this.details.total_price
-    ) {
-      this.details.status = 'Waiting for Payment'
-    }
-
-    // Product not available, but is there any payment? Yes
-    else if (
-      this.details.order.availability == 0 &&
-      this.details.total_paid > 0 &&
-      this.details.total_paid <= this.details.total_price
-    ) {
-      this.details.status = 'To be refund'
-    }
-
-    // Product not available, but is there any payment? Nope
-    else if (
-      this.details.order.availability == 0 &&
-      this.details.total_paid == 0
-    ) {
-      this.details.status = 'Refund'
-    }
+    // Get Status
+    this.details.status = this.getStatus(this.details.order)
   },
   methods: {
     // Update Order
@@ -440,7 +384,7 @@ export default {
 
       try {
         const updateOrder = await this.$axios.put(
-          `/order/${this.order_id}`,
+          `/api/order/${this.order_id}`,
           this.edit_order
         )
       } catch (error) {
@@ -449,6 +393,82 @@ export default {
 
       this.$nuxt.refresh()
     },
+
+    // Details
+    getDetails(order) {
+      // Count Total Price
+      let total_price = 0
+
+      for (let item of order.order_items) {
+        total_price += parseInt(item.quantity * item.price)
+      }
+
+      total_price = parseInt(total_price + order.shipping_costs)
+
+      this.details.total_price = total_price
+
+      // Count Paid
+      let total_paid = 0
+
+      for (let payment of order.payments) {
+        total_paid += parseInt(payment.amount)
+      }
+
+      this.details.total_paid = total_paid
+
+      // To Pay
+      let to_pay = 0
+
+      to_pay = total_price - total_paid
+
+      this.details.to_pay = to_pay
+    },
+
+    // Status
+    getStatus(order) {
+      // Status
+
+      // Is order success? Yes
+      if (
+        order.availability == 1 &&
+        this.details.total_paid == this.details.total_price
+      ) {
+        return 'Success'
+      }
+
+      // Is product availability known? Nope
+      else if (order.availability == null) {
+        return 'Pending Availability'
+      }
+
+      // Product available, but it is paid off? Not yet
+      else if (
+        order.availability == 1 &&
+        this.details.total_paid < this.details.total_price
+      ) {
+        return 'Pending Payment'
+      }
+
+      // Product not available, but is there any payment? Yes
+      else if (
+        order.availability == 0 &&
+        this.details.total_paid > 0 &&
+        this.details.total_paid <= this.details.total_price
+      ) {
+        return 'To be refund'
+      }
+
+      // Product not available, but is there any payment? Nope
+      else if (order.availability == 0 && this.details.total_paid == 0) {
+        return 'Refund'
+      }
+
+      // Unknown
+      else {
+        return 'Unknown'
+      }
+    },
+
     // Show Modal
     showModal(modal_type) {
       this.closeModal()

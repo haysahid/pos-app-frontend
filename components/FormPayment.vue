@@ -12,17 +12,6 @@
         </h1>
       </div>
 
-      <!-- Information -->
-      <div class="form-group">
-        <label for="" class="input-label required">Information</label>
-        <input
-          type="text"
-          class="input-field"
-          placeholder="Information"
-          v-model="payment.information"
-        />
-      </div>
-
       <!-- Payment Method -->
       <div class="form-group">
         <label for="" class="input-label required">Payment Method</label>
@@ -36,6 +25,7 @@
           v-else
           v-model="payment.payment_account_id"
         >
+          <option value="null" selected disabled>- Select Payment Method -</option>
           <option
             :value="payment_account.id"
             v-for="payment_account in listPaymentMethod"
@@ -43,6 +33,35 @@
             {{ payment_account.method }}
           </option>
         </select>
+
+        <!-- Validation -->
+        <p
+          class="text-red-500 text-xs italic"
+          v-if="validation.payment_account_id"
+        >
+          {{
+            validation.payment_account_id[0].replace(
+              'payment account id',
+              'payment method'
+            )
+          }}
+        </p>
+      </div>
+
+      <!-- Information -->
+      <div class="form-group">
+        <label for="" class="input-label required">Information</label>
+        <InputOptions
+          v-model="payment.information"
+          :items="info_options"
+          items_title="Information"
+          :validation="validation.information"
+        />
+
+        <!-- Validation -->
+        <p class="text-red-500 text-xs italic" v-if="validation.information">
+          {{ validation.information[0] }}
+        </p>
       </div>
 
       <!-- Amount -->
@@ -50,18 +69,25 @@
         <label for="" class="input-label required">Amount</label>
         <div class="flex flex-row p-0">
           <div
-            class="rounded-l-[6px] border-[1.5px] border-grey-40 bg-grey-40 text-white py-[10px] px-[11px]"
+            class="input-field rounded-l-[6px] rounded-r-none border-[1.5px] border-grey-40 bg-grey-40 text-white py-[10px] px-[11px]"
           >
             Rp
           </div>
           <input
             type="text"
-            class="input-field rounded-l-none flex-grow min-w-0"
+            class="input-field rounded-l-none flex-grow min-w-0 text-right"
             placeholder="-"
             @input="toCurreny"
             v-model="payment.amount"
           />
+
+          <p class="hidden" v-if="validation.amount"></p>
         </div>
+
+        <!-- Validation -->
+        <p class="text-red-500 text-xs italic" v-if="validation.amount">
+          {{ validation.amount[0] }}
+        </p>
       </div>
 
       <!-- Button -->
@@ -108,6 +134,16 @@ export default {
         payment_account_id: null,
         amount: null,
       },
+
+      // Information Options
+      info_options: [
+        { name: 'DP 50%' },
+        { name: 'Cicilan' },
+        { name: 'Pelunasan' },
+      ],
+
+      // Validation
+      validation: [],
     }
   },
   async fetch() {
@@ -115,12 +151,12 @@ export default {
     this.order_id = this.$route.params.id
 
     // Get Payment Accounts
-    this.payment_accounts = await this.$axios.get('/payment_account')
+    this.payment_accounts = await this.$axios.get('/api/payment_account')
 
     if (this.payment_id) {
       // For Edit
       this.payment_edit = await this.$axios.get(
-        `/order/${this.order_id}/payment/${this.payment_id}`
+        `/api/order/${this.order_id}/payment/${this.payment_id}`
       )
 
       this.payment.information =
@@ -146,7 +182,7 @@ export default {
   computed: {
     listPaymentMethod() {
       return this.payment_accounts.data.result.filter(
-        (item) => item.method != 'Refund'
+        (item) => item.method != 'REFUND'
       )
     },
   },
@@ -168,15 +204,20 @@ export default {
 
         try {
           let response = await this.$axios.post(
-            `/order/${this.order_id}/payment`,
+            `/api/order/${this.order_id}/payment`,
             data
           )
 
           // Passing Value
           let payment = response.data.result.payment
           this.$emit('get-payment', payment)
+
+          this.payment_id = null
+          this.$emit('close-form')
+          this.refreshData()
         } catch (error) {
-          console.log(error.message)
+          const validation = error.response.data.errors
+          this.validation = validation
         }
       }
 
@@ -191,23 +232,24 @@ export default {
 
         try {
           let response = await this.$axios.put(
-            `/order/${this.order_id}/payment/${this.payment_id}`,
+            `/api/order/${this.order_id}/payment/${this.payment_id}`,
             data
           )
+
+          this.payment_id = null
+          this.$emit('close-form')
+          this.refreshData()
         } catch (error) {
-          console.log(error.message)
+          const validation = error.response.data.errors
+          this.validation = validation
         }
       }
-
-      this.payment_id = null
-      this.$emit('close-form')
-      this.refreshData()
     },
 
     // Delete Payment
     async deletePayment() {
       await this.$axios.delete(
-        `/order/${this.order_id}/payment/${this.payment_id}`
+        `/api/order/${this.order_id}/payment/${this.payment_id}`
       )
 
       this.payment_id = null

@@ -157,7 +157,6 @@
 export default {
   data() {
     return {
-      image_path: 'http://localhost:8000/storage/',
       brands: [],
       warehouses: [],
       categories: [],

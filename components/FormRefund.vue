@@ -83,12 +83,12 @@ export default {
     this.order_id = this.$route.params.id
 
     // Get Payment Accounts
-    this.payment_accounts = await this.$axios.get('/payment_account')
+    this.payment_accounts = await this.$axios.get('/api/payment_account')
 
     if (this.payment_id) {
       // For Edit
       this.payment_edit = await this.$axios.get(
-        `/order/${this.order_id}/payment/${this.payment_id}`
+        `/api/order/${this.order_id}/payment/${this.payment_id}`
       )
 
       this.payment.information =
@@ -134,7 +134,7 @@ export default {
 
         try {
           let response = await this.$axios.post(
-            `/order/${this.order_id}/payment`,
+            `/api/order/${this.order_id}/payment`,
             data
           )
 
@@ -157,7 +157,7 @@ export default {
 
         try {
           let response = await this.$axios.put(
-            `/order/${this.order_id}/payment/${this.payment_id}`,
+            `/api/order/${this.order_id}/payment/${this.payment_id}`,
             data
           )
         } catch (error) {
@@ -173,7 +173,7 @@ export default {
     // Delete Payment
     async deletePayment() {
       await this.$axios.delete(
-        `/order/${this.order_id}/payment/${this.payment_id}`
+        `/api/order/${this.order_id}/payment/${this.payment_id}`
       )
 
       this.payment_id = null

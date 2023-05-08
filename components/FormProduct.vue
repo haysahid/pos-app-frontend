@@ -15,12 +15,21 @@
 
       <!-- Brand -->
       <div class="form-group">
-        <label for="" class="input-label">Brand</label>
+        <label for="" class="input-label required">Brand</label>
         <InputOptions
           v-model="product.brand_name"
           :items="brands"
-          items_title="Brand"
+          items_title="Brand Name"
+          :validation="validation.errors?.brand_name"
         />
+
+        <!-- Validation -->
+        <p
+          class="text-red-500 text-xs italic"
+          v-if="validation.errors?.brand_name"
+        >
+          {{ validation.errors?.brand_name[0] }}
+        </p>
       </div>
 
       <!-- Product Name -->
@@ -32,6 +41,11 @@
           placeholder="Product Name"
           v-model="product.name"
         />
+
+        <!-- Validation -->
+        <p class="text-red-500 text-xs italic" v-if="validation.errors?.name">
+          {{ validation.errors?.name[0] }}
+        </p>
       </div>
 
       <!-- Image -->
@@ -44,7 +58,7 @@
           v-if="product.image && !change_image"
         >
           <img
-            :src="preview_image ? preview_image : image_path + product.image"
+            :src="preview_image ? preview_image : imgUrl + product.image"
             alt=""
             class="w-[100px] rounded-[6px] object-cover aspect-square self-center"
           />
@@ -122,18 +136,36 @@
         <InputOptions
           v-model="product.warehouse_name"
           :items="warehouses"
-          items_title="Warehouse"
+          items_title="Warehouse Name"
+          :validation="validation.errors?.name"
         />
+
+        <!-- Validation -->
+        <p
+          class="text-red-500 text-xs italic"
+          v-if="validation.errors?.warehouse_name"
+        >
+          {{ validation.errors?.warehouse_name[0] }}
+        </p>
       </div>
 
       <!-- Category -->
       <div class="form-group">
-        <label for="" class="input-label">Category</label>
+        <label for="" class="input-label required">Category</label>
         <InputOptions
           v-model="product.category_name"
           :items="categories"
           items_title="Category"
+          :validation="validation.errors?.category_name"
         />
+
+        <!-- Validation -->
+        <p
+          class="text-red-500 text-xs italic"
+          v-if="validation.errors?.category_name"
+        >
+          {{ validation.errors?.category_name[0] }}
+        </p>
       </div>
 
       <!-- Button -->
@@ -170,7 +202,7 @@ export default {
   },
   data() {
     return {
-      image_path: 'http://localhost:8000/storage/',
+      imgUrl: process.env.imgUrl,
       brands: [],
       warehouses: [],
       categories: [],
@@ -185,26 +217,31 @@ export default {
       },
       change_image: false,
       preview_image: null,
+
+      // Validation
+      validation: [],
     }
   },
   async fetch() {
     this.change_image = false
 
     // Get Brands
-    const resBrands = await this.$axios.get('/brand')
+    const resBrands = await this.$axios.get('/api/brand')
     this.brands = resBrands.data.result
 
     // Get Warehouses
-    const resWarehouses = await this.$axios.get('/warehouse')
+    const resWarehouses = await this.$axios.get('/api/warehouse')
     this.warehouses = resWarehouses.data.result
 
     // Get Categories
-    const resCategories = await this.$axios.get('/category')
+    const resCategories = await this.$axios.get('/api/category')
     this.categories = resCategories.data.result
 
     if (this.product_id) {
       // For Edit
-      this.product_edit = await this.$axios.get(`/product/${this.product_id}`)
+      this.product_edit = await this.$axios.get(
+        `/api/product/${this.product_id}`
+      )
 
       const data = this.product_edit.data.result.product
 
@@ -243,11 +280,15 @@ export default {
         }
 
         try {
-          let response = await this.$axios.post('/product', data, {
+          let response = await this.$axios.post('/api/product', data, {
             'content-type': 'multipart/form-data',
           })
+
+          this.product_id = null
+          this.$emit('close-form')
+          this.refreshData()
         } catch (error) {
-          console.log(error.message)
+          this.validation = error.response.data
         }
       }
 
@@ -263,25 +304,25 @@ export default {
 
         try {
           let response = await this.$axios.post(
-            `/product/${this.product_id}`,
+            `/api/product/${this.product_id}`,
             data,
             {
               'content-type': 'multipart/form-data',
             }
           )
+
+          this.product_id = null
+          this.$emit('close-form')
+          this.refreshData()
         } catch (error) {
-          console.log(error.message)
+          this.validation = error.response.data
         }
       }
-
-      this.product_id = null
-      this.$emit('close-form')
-      this.refreshData()
     },
 
     // Delete Product
     async deleteProduct() {
-      await this.$axios.delete(`/product/${this.product_id}`)
+      await this.$axios.delete(`/api/product/${this.product_id}`)
 
       this.product_id = null
       this.$emit('close-form')

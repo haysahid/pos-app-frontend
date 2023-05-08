@@ -84,7 +84,10 @@
               </h2>
 
               <!-- Content -->
-              <div class="overflow-y-auto px-6 pb-[60px] h-full">
+              <div
+                class="overflow-y-auto px-6 pb-[60px] h-full"
+                v-if="payments"
+              >
                 <!-- Show Content -->
                 <table class="w-full" v-if="payments.length > 0">
                   <tbody class="divide-y divide-gray-200">
@@ -176,6 +179,7 @@
                 class="flex flex-col divide-y divide-gray-200 overflow-y-auto px-6 pb-[60px]"
               >
                 <div
+                  v-if="products"
                   v-for="product in products"
                   class="flex gap-2 items-center cursor-pointer"
                 >
@@ -220,9 +224,9 @@ export default {
     let resReports = []
 
     if (this.range == '') {
-      resReports = await this.$axios.get('/report')
+      resReports = await this.$axios.get('/api/report')
     } else {
-      resReports = await this.$axios.get('/report', {
+      resReports = await this.$axios.get('/api/report', {
         params: {
           range: this.range,
         },
@@ -232,7 +236,7 @@ export default {
     this.reports = resReports.data.result
 
     // Get Payments
-    const resPayments = await this.$axios.get('/order/all/payment', {
+    const resPayments = await this.$axios.get('/api/order/all/payment', {
       params: {
         range: 1,
       },
@@ -240,7 +244,7 @@ export default {
     this.payments = resPayments.data.result.data
 
     // Get Best Seller Product
-    const resProducts = await this.$axios.get('/product', {
+    const resProducts = await this.$axios.get('/api/product', {
       params: {
         top: 10,
       },

@@ -29,7 +29,7 @@
             </svg>
           </div>
           <img
-            :src="image_path + $store.state.settings.app_logo"
+            :src="imgUrl + $store.state.settings.app_logo"
             alt=""
             class="h-[50px]"
             v-else
@@ -157,7 +157,7 @@ export default {
   auth: 'guest',
   data() {
     return {
-      image_path: 'http://localhost:8000/storage/',
+      imgUrl: process.env.imgUrl,
       register: {
         name: '',
         email: '',
@@ -176,7 +176,10 @@ export default {
       if (this.confirm_password == this.register.password) {
         try {
           // Send Registration Data to Server
-          let response = await this.$axios.post('/auth/register', this.register)
+          let response = await this.$axios.post(
+            '/api/auth/register',
+            this.register
+          )
 
           // If Successful, Login User
           try {

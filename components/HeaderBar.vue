@@ -27,7 +27,7 @@
           </svg>
         </div>
         <img
-          :src="image_path + $store.state.settings.app_logo"
+          :src="imgUrl + $store.state.settings.app_logo"
           alt=""
           class="h-[32px]"
           v-else
@@ -62,7 +62,7 @@
           </svg>
         </div>
         <img
-          :src="image_path + $store.state.settings.app_logo"
+          :src="imgUrl + $store.state.settings.app_logo"
           alt=""
           class="h-[32px]"
           v-else
@@ -128,7 +128,7 @@ export default {
   },
   data() {
     return {
-      image_path: 'http://localhost:8000/storage/',
+      imgUrl: process.env.imgUrl,
       show_options: false,
     }
   },

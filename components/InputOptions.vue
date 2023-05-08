@@ -3,14 +3,21 @@
     <input
       type="text"
       class="input-field w-full"
-      :placeholder="items_title + ' Name'"
+      :placeholder="items_title"
       :value="value"
       @input="searchByInput"
-      @click="showOptions"
       @keydown.esc="closeOptions"
+      @keydown.tab="closeOptions"
+      @focus="showOptions"
     />
 
-    <div class="" @click="closeOptions" v-if="show_options == true">
+    <p class="hidden" v-if="validation"></p>
+
+    <div
+      class=""
+      @click="closeOptions"
+      v-if="show_options == true && listOption.length > 0"
+    >
       <div class="fixed inset-0"></div>
       <div
         class="absolute top-[40.5px] w-full max-h-[200px] overflow-y-auto z-[999] border-[1.5px] border-primary rounded-lg shadow-lg"
@@ -31,6 +38,9 @@ export default {
     value: null,
     items: [],
     items_title: null,
+
+    // Validation
+    validation: [],
   },
   data() {
     return {

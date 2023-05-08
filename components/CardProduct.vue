@@ -1,13 +1,22 @@
 <template>
-  <div class="flex flex-row items-start gap-4 card flex-grow p-[16px]">
+  <div class="flex flex-row gap-4 card flex-grow p-[16px]">
+    <div
+      class="w-[100px] h-[100px] rounded-[6px] flex justify-center items-center bg-grey-5"
+      v-if="!image"
+    >
+      <EmptyImage />
+    </div>
+
     <img
-      :src="image_path + image"
+      :src="imgUrl + image"
       :alt="name"
       class="w-[100px] h-[100px] rounded-[6px] object-cover aspect-square"
+      v-else
     />
+
     <div class="flex flex-col flex-grow">
-      <p class="font-medium text-grey-80 text-[14px] mb-1">{{ brand.name }}</p>
-      <div class="font-bold text-dark text-[16px] mb-1 line-clamp-1">
+      <p class="text-grey-80 text-[14px] mb-1">{{ brand.name }}</p>
+      <div class="font-medium text-dark text-[16px] mb-1 line-clamp-1">
         {{ name }}
       </div>
       <p class="text-grey-60 text-[12px] mb-4 line-clamp-1">
@@ -45,7 +54,7 @@ export default {
   },
   data() {
     return {
-      image_path: 'http://localhost:8000/storage/',
+      imgUrl: process.env.imgUrl,
     }
   },
 }

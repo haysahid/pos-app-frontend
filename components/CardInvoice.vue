@@ -127,9 +127,7 @@
                     Sub Total :
                   </td>
                   <td class="text-right font-semibold">
-                    {{
-                      $toCurrencyString(countPrice(item.quantity, item.price))
-                    }}
+                    {{ $toCurrencyString(total_price - order.shipping_costs) }}
                   </td>
                 </tr>
                 <tr class="">
@@ -232,10 +230,10 @@ export default {
     }
   },
   async fetch() {
-    const response = await this.$axios.get('/payment_account')
+    const response = await this.$axios.get('/api/payment_account')
 
     this.payment_accounts = response.data.result.filter(
-      (item) => item.method != 'Refund'
+      (item) => item.method != 'REFUND'
     )
   },
   methods: {

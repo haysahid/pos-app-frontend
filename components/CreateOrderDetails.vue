@@ -24,7 +24,9 @@
           </tr>
           <tr class="table-divider">
             <td class="">Shipping costs</td>
-            <td class="text-right">Rp -</td>
+            <td class="text-right">
+              {{ shipping_costs ? $toCurrencyString(shipping_costs) : '?' }}
+            </td>
           </tr>
         </tbody>
         <tfoot class="text-dark">
@@ -45,6 +47,7 @@ export default {
   props: {
     product: {},
     order_item: {},
+    shipping_costs: {},
   },
   data() {
     return {

@@ -19,7 +19,7 @@ export const mutations = {
 export const actions = {
     // Get Settings
     async getSettings({ commit }) {
-        const response = await this.$axios.get('/setting')
+        const response = await this.$axios.get('/api/setting')
 
         let settings = {}
 

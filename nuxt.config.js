@@ -29,6 +29,8 @@ export default {
   plugins: [
     '@/plugins/vs-pagination',
     '@/plugins/to-currency-string',
+    '@/plugins/toast-status',
+    '@/plugins/shipping-api',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -46,12 +48,38 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/auth-next',
     'nuxt-sweetalert2',
+    '@nuxtjs/proxy',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: 'https://pos-app-backend.test/api/',
+    // baseURL: 'http://localhost:8000/api/',
+    // prefix: 'http://localhost:8000/api/',
+    proxy: true,
+  },
+
+  proxy: {
+    // API 1
+    '/api/': {
+      // target: 'http://127.0.0.1:8000/api/',
+      target: process.env.API_1,
+      secure: false,
+      changeOrigin: true,
+      pathRewrite: { '^/api/': '' },
+    },
+
+    // API 2
+    '/api2/': {
+      target: process.env.API_2,
+      secure: false,
+      changeOrigin: true,
+      pathRewrite: { '^/api2/': '' },
+    }
+  },
+
+  env: {
+    imgUrl: process.env.IMG_URL,
   },
 
   // Authentication
@@ -69,9 +97,9 @@ export default {
           autoFetch: true
         },
         endpoints: {
-          login: { url: '/auth/login', method: 'post' },
-          logout: { url: '/auth/logout', method: 'post' },
-          user: { url: '/profile', method: 'get' }
+          login: { url: '/api/auth/login', method: 'post' },
+          logout: { url: '/api/auth/logout', method: 'post' },
+          user: { url: '/api/profile', method: 'get' }
         }
       }
     }

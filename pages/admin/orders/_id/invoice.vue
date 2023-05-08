@@ -27,7 +27,7 @@
             </button>
 
             <h1
-              class="text-[24px] font-bold text-dark self-center line-clamp-1"
+              class="text-[24px] font-bold text-dark self-center py-1 line-clamp-1"
             >
               Invoice
             </h1>
@@ -140,7 +140,7 @@ export default {
   async fetch() {
     this.order_id = this.$route.params.id
 
-    const response = await this.$axios.get(`/order/${this.order_id}`)
+    const response = await this.$axios.get(`/api/order/${this.order_id}`)
 
     this.details.order = response.data.result.order
 
@@ -172,7 +172,7 @@ export default {
       this.details.order.order_items[0].quantity
 
     this.product = await this.$axios.get(
-      `/product/${this.edit_order.order_items[0].product_id}`
+      `/api/product/${this.edit_order.order_items[0].product_id}`
     )
 
     // Count Total Price
@@ -251,7 +251,7 @@ export default {
 
       try {
         const updateOrder = await this.$axios.put(
-          `/order/${this.order_id}`,
+          `/api/order/${this.order_id}`,
           this.edit_order
         )
       } catch (error) {

@@ -21,6 +21,11 @@
           placeholder="Brand Name"
           v-model="brand.name"
         />
+
+        <!-- Validation -->
+        <p class="text-red-500 text-xs italic" v-if="validation.name">
+          {{ validation.name[0] }}
+        </p>
       </div>
 
       <!-- Button -->
@@ -42,14 +47,14 @@
             Cancel
           </button>
         </div>
-        <button
+        <!-- <button
           class="btn btn-danger"
           type="button"
           @click="deleteBrand"
           v-if="brand_id"
         >
           Delete
-        </button>
+        </button> -->
       </div>
     </form>
   </div>
@@ -66,12 +71,15 @@ export default {
       brand: {
         name: null,
       },
+
+      // Validation
+      validation: [],
     }
   },
   async fetch() {
     if (this.brand_id) {
       // For Edit
-      this.brand_edit = await this.$axios.get(`/brand/${this.brand_id}`)
+      this.brand_edit = await this.$axios.get(`/api/brand/${this.brand_id}`)
 
       this.brand.name = this.brand_edit.data.result.brand.name
     } else {
@@ -99,13 +107,18 @@ export default {
         }
 
         try {
-          let response = await this.$axios.post('/brand', data)
+          let response = await this.$axios.post('/api/brand', data)
 
           // Passing Value
           let brand = response.data.result.brand
           this.$emit('get-brand', brand)
+
+          this.brand_id = null
+          this.$emit('close-form')
+          this.refreshData()
         } catch (error) {
-          console.log(error.message)
+          const validation = error.response.data.errors
+          this.validation = validation
         }
       }
 
@@ -119,20 +132,21 @@ export default {
         }
 
         try {
-          let response = await this.$axios.put(`/brand/${this.brand_id}`, data)
+          let response = await this.$axios.put(`/api/brand/${this.brand_id}`, data)
+
+          this.brand_id = null
+          this.$emit('close-form')
+          this.refreshData()
         } catch (error) {
-          console.log(error.message)
+          const validation = error.response.data.errors
+          this.validation = validation
         }
       }
-
-      this.brand_id = null
-      this.$emit('close-form')
-      this.refreshData()
     },
 
     // Delete Brand
     async deleteBrand() {
-      await this.$axios.delete(`/brand/${this.brand_id}`)
+      await this.$axios.delete(`/api/brand/${this.brand_id}`)
 
       this.brand_id = null
       this.$emit('close-form')
