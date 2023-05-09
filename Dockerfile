@@ -18,9 +18,9 @@ ENV API_1="http://34.143.202.14/api/"
 ENV API_2="https://api.rajaongkir.com/starter/"
 ENV IMG_URL="http://34.143.202.14/storage/"
 
-EXPOSE 3000
+EXPOSE 8080
 
-ENV NUXT_HOST=0.0.0.0
-ENV NUXT_PORT=3000
+ENV HOST=0.0.0.0
+ENV PORT=8080
 
 CMD [ "npm", "run", "start" ]
