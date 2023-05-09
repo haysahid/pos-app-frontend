@@ -59,7 +59,7 @@
 
         <!-- Email -->
         <div class="form-group">
-          <label for="" class="input-label">Email Address*</label>
+          <label for="" class="input-label required">Email Address</label>
           <input
             type="email"
             class="input-field"
@@ -78,7 +78,7 @@
 
         <!-- Password -->
         <div class="form-group">
-          <label for="" class="input-label">Password*</label>
+          <label for="" class="input-label required">Password</label>
           <input
             type="password"
             class="input-field"
@@ -104,8 +104,18 @@
           <p class="input-label">Remember me</p>
         </div>
 
+        <!-- Loading Button -->
+        <button
+          type="button"
+          class="w-full btn btn-disable mt-[14px]"
+          disabled
+          v-if="isLoading"
+        >
+          Loading...
+        </button>
+
         <!-- Button -->
-        <button type="submit" class="w-full btn btn-primary mt-[14px]">
+        <button type="submit" class="w-full btn btn-primary mt-[14px]" v-else>
           Log In
         </button>
 
@@ -143,6 +153,9 @@ export default {
         password: '',
       },
       validation: [],
+
+      // Loading Button
+      isLoading: false,
     }
   },
   async fetch() {
@@ -151,13 +164,16 @@ export default {
   },
   methods: {
     async userLogin() {
+      this.isLoading = true
+
       try {
         let response = await this.$auth.loginWith('local', { data: this.login })
-
         this.$router.push({ name: 'admin-overview' })
       } catch (err) {
         this.validation = err.response.data
       }
+
+      this.isLoading = false
     },
   },
 }

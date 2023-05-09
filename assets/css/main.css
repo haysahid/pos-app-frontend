@@ -57,6 +57,10 @@
     @apply rounded-[6px] py-[10px] px-[20px] text-center;
   }
 
+  .btn-disable {
+    @apply bg-grey-20 hover:bg-grey-20 text-grey-40;
+  }
+
   .btn-primary {
     @apply font-semibold bg-primary text-white hover:bg-primary-hover ease-in-out duration-100;
   }

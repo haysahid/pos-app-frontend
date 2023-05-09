@@ -269,7 +269,13 @@
         v-if="modal_type == 'addPayment'"
         @click.stop
       >
-        <FormPayment @close-form="closeModal" @get-payment="refresh" />
+        <FormPayment
+          @close-form="closeModal"
+          @get-payment="refresh"
+          :total_price="details.total_price"
+          :total_paid="details.total_paid"
+          :to_pay="details.to_pay"
+        />
       </aside>
 
       <!-- Refund Modal -->

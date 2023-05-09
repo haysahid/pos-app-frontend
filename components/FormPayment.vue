@@ -25,7 +25,9 @@
           v-else
           v-model="payment.payment_account_id"
         >
-          <option value="null" selected disabled>- Select Payment Method -</option>
+          <option value="null" selected disabled>
+            - Select Payment Method -
+          </option>
           <option
             :value="payment_account.id"
             v-for="payment_account in listPaymentMethod"
@@ -56,6 +58,7 @@
           :items="info_options"
           items_title="Information"
           :validation="validation.information"
+          @input="setAmount"
         />
 
         <!-- Validation -->
@@ -124,6 +127,9 @@
 export default {
   props: {
     payment_id: null,
+    total_price: null,
+    total_paid: null,
+    to_pay: null,
   },
   data() {
     return {
@@ -255,6 +261,36 @@ export default {
       this.payment_id = null
       this.$emit('close-form')
       this.refreshData()
+    },
+
+    // Set Amount
+    setAmount(information) {
+      this.payment.information = information
+      let amount = 0
+
+      // If empty then do nothing
+      if (information == '') {
+        return
+      }
+
+      if (this.total_price || this.total_paid || this.to_pay) {
+        if (information == 'DP 50%') {
+          amount = this.total_price * 0.5
+        }
+
+        if (information == 'Pelunasan') {
+          amount = this.to_pay
+        }
+      }
+
+      // Cast value to string
+      let value = amount.toString()
+
+      // Replace '.'
+      value = value.replaceAll('.', '')
+
+      // Set payment value
+      this.payment.amount = parseInt(value).toLocaleString('id')
     },
 
     // Refresh Data
