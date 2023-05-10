@@ -39,7 +39,7 @@
           <div class="flex flex-col w-full gap-4">
             <div class="flex flex-col mb-[40px] gap-2">
               <!-- Order Details -->
-              <OrderDetails v-bind="details" />
+              <OrderDetails v-bind="details" @edit-payment="editPayment" />
 
               <!-- Action Button -->
               <div
@@ -278,6 +278,22 @@
         />
       </aside>
 
+      <!-- Edit Payment Modal -->
+      <aside
+        class="w-[450px] max-md:w-full max-md:pb-[100px] h-full fixed right-0 top-0 bg-white overflow-y-auto shadow-lg"
+        v-if="modal_type == 'editPayment'"
+        @click.stop
+      >
+        <FormPayment
+          @close-form="closeModal"
+          @get-payment="refresh"
+          :total_price="details.total_price"
+          :total_paid="details.total_paid"
+          :to_pay="details.to_pay"
+          :payment_id="payment_id"
+        />
+      </aside>
+
       <!-- Refund Modal -->
       <aside
         class="w-[450px] max-md:w-full max-md:pb-[100px] h-full fixed right-0 top-0 bg-white overflow-y-auto shadow-lg"
@@ -331,6 +347,9 @@ export default {
           },
         ],
       },
+
+      // Edit Payment
+      payment_id: null,
     }
   },
   async fetch() {
@@ -485,7 +504,14 @@ export default {
     // Close Modal
     closeModal() {
       this.modal_type = null
+      this.payment_id = null
       this.modal = false
+    },
+
+    // Edit Payment
+    editPayment(payment_id) {
+      this.showModal('editPayment')
+      this.payment_id = payment_id
     },
 
     // Price to Currency

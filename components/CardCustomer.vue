@@ -3,13 +3,11 @@
     <div class="flex flex-col flex-grow">
       <div class="font-medium text-dark text-[16px] mb-1">{{ name }}</div>
       <p class="text-grey-60 text-[12px] mb-2.5">{{ phone }}</p>
-      <div class="flex flex-wrap gap-1 justify-between">
+      <div class="flex flex-row max-sm:flex-col gap-1 justify-between">
         <p class="text-grey-60 text-[12px] line-clamp-2">
           {{ address }}
         </p>
-        <span class="text-grey-40 text-[12px]"
-          >{{ created_at }}</span
-        >
+        <span class="text-grey-40 text-[12px]">{{ created_at }}</span>
       </div>
     </div>
   </div>

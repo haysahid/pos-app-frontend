@@ -399,25 +399,15 @@
             <div class="flex flex-col gap-4">
               <div v-if="$fetchState.pending">Loading...</div>
               <div
-                class="flex flex-row border-[1.5px] border-grey-40 hover:border-grey-60 rounded-lg items-center gap-4 flex-grow p-[16px] justify-between"
+                class="flex flex-row gap-4 card p-0 bg-white input-field border-grey-60 hover:border-grey-60"
                 v-else
                 v-for="payment_account in listPaymentMethod"
                 :key="payment_account.id"
               >
-                <div class="flex flex-col gap-1">
-                  <p class="text-grey-80">{{ payment_account.method }}</p>
-                  <div
-                    class="font-bold text-dark text-[16px] mb-2 line-clamp-1"
-                  >
-                    {{ payment_account.account_name }}
-                  </div>
-                  <p class="text-grey-60 line-clamp-1">
-                    {{ payment_account.number }}
-                  </p>
-                </div>
+                <CardPaymentAccount :payment_account="payment_account" />
                 <button
                   type="button"
-                  class="p-2"
+                  class="p-2 m-4"
                   @click="showModal('paymentAccountForm', payment_account.id)"
                 >
                   <svg

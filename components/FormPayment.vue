@@ -18,36 +18,68 @@
         <select v-if="$fetchState.pending" class="input-field text-grey-40">
           <option value="">Loading...</option>
         </select>
-        <select
-          name=""
-          id=""
-          class="input-field"
-          v-else
-          v-model="payment.payment_account_id"
-        >
-          <option value="null" selected disabled>
-            - Select Payment Method -
-          </option>
-          <option
-            :value="payment_account.id"
-            v-for="payment_account in listPaymentMethod"
-          >
-            {{ payment_account.method }}
-          </option>
-        </select>
 
-        <!-- Validation -->
-        <p
-          class="text-red-500 text-xs italic"
-          v-if="validation.payment_account_id"
-        >
-          {{
-            validation.payment_account_id[0].replace(
-              'payment account id',
-              'payment method'
-            )
-          }}
-        </p>
+        <div class="" v-else>
+          <!-- Empty Payment Method -->
+          <select
+            name=""
+            id=""
+            class="input-field w-full"
+            v-model="payment.payment_account_id"
+            @input="setPaymentAccount($event.target.value)"
+            v-if="!payment.payment_account_id && !payment_account"
+          >
+            <option value="null" selected disabled>
+              - Select Payment Method -
+            </option>
+            <option
+              :value="payment_account.id"
+              v-for="payment_account in listPaymentMethod"
+            >
+              {{ payment_account.method }}
+            </option>
+          </select>
+
+          <!-- Selected Payment Method -->
+          <div
+            class="flex flex-row gap-4 card p-0 bg-white input-field border-grey-60 hover:border-grey-60"
+            v-else
+          >
+            <CardPaymentAccount class="" :payment_account="payment_account" />
+            <button
+              type="button"
+              class="btn btn-secondary p-2.5 self-center m-4"
+              @click="changePaymentAccount"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z"
+                />
+                <path
+                  d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Validation -->
+          <p
+            class="text-red-500 text-xs italic"
+            v-if="validation.payment_account_id"
+          >
+            {{
+              validation.payment_account_id[0].replace(
+                'payment account id',
+                'payment method'
+              )
+            }}
+          </p>
+        </div>
       </div>
 
       <!-- Information -->
@@ -135,6 +167,8 @@ export default {
     return {
       payment_edit: [],
       payment_accounts: [],
+      payment_account: null,
+
       payment: {
         information: null,
         payment_account_id: null,
@@ -157,21 +191,24 @@ export default {
     this.order_id = this.$route.params.id
 
     // Get Payment Accounts
-    this.payment_accounts = await this.$axios.get('/api/payment_account')
+    const resPaymentAccounts = await this.$axios.get('/api/payment_account')
+    this.payment_accounts = resPaymentAccounts.data.result
 
     if (this.payment_id) {
       // For Edit
-      this.payment_edit = await this.$axios.get(
+      const resPaymentAccount = await this.$axios.get(
         `/api/order/${this.order_id}/payment/${this.payment_id}`
       )
 
-      this.payment.information =
-        this.payment_edit.data.result.payment.information
-      this.payment.payment_account_id =
-        this.payment_edit.data.result.payment.payment_account_id
-      this.payment.amount = parseInt(
-        this.payment_edit.data.result.payment.amount
-      ).toLocaleString('id')
+      this.payment_edit = resPaymentAccount.data.result.payment
+
+      this.payment.information = this.payment_edit.information
+      this.payment.payment_account_id = this.payment_edit.payment_account_id
+      this.payment.amount = parseInt(this.payment_edit.amount).toLocaleString(
+        'id'
+      )
+
+      this.setPaymentAccount(this.payment_edit.payment_account_id)
     } else {
       // For Add
       this.payment.information = null
@@ -187,9 +224,7 @@ export default {
   },
   computed: {
     listPaymentMethod() {
-      return this.payment_accounts.data.result.filter(
-        (item) => item.method != 'REFUND'
-      )
+      return this.payment_accounts.filter((item) => item.method != 'REFUND')
     },
   },
   methods: {
@@ -261,6 +296,23 @@ export default {
       this.payment_id = null
       this.$emit('close-form')
       this.refreshData()
+    },
+
+    // Set Payment Account
+    setPaymentAccount(payment_account_id) {
+      this.payment.payment_account_id = payment_account_id
+
+      const payment_account = this.payment_accounts.find(
+        ({ id }) => id == this.payment.payment_account_id
+      )
+
+      this.payment_account = payment_account
+    },
+
+    // Change Payment Account
+    changePaymentAccount() {
+      this.payment_account = null
+      this.payment.payment_account_id = null
     },
 
     // Set Amount
