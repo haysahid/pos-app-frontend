@@ -75,11 +75,19 @@ export default {
       secure: false,
       changeOrigin: true,
       pathRewrite: { '^/api2/': '' },
+    },
+
+    // IMG
+    '/storage/': {
+      target: process.env.IMG_URL,
+      secure: false,
+      changeOrigin: true,
+      pathRewrite: { '^/storage/': '' },
     }
   },
 
   env: {
-    imgUrl: process.env.IMG_URL,
+    imgUrl: '/storage/',
   },
 
   // Authentication
