@@ -3,7 +3,7 @@ export default {
   ssr: false,
 
   // Target: https://go.nuxtjs.dev/config-target
-  target: 'server',
+  target: 'static',
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -40,6 +40,7 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/tailwindcss
     // '@nuxtjs/tailwindcss',
+    '@nuxtjs/netlify-files',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -127,5 +128,37 @@ export default {
 
   server: {
     host: "0.0.0.0"
+  },
+
+  netlifyFiles: {
+    netlifyToml: {
+      build: {
+        environment: {
+          API_1: process.env.API_1,
+          API_2: process.env.API_2,
+          IMG_URL: process.env.IMG_URL,
+        }
+      },
+      redirects: [
+        {
+          from: '/api/',
+          to: process.env.API_1,
+          status: 200,
+          force: true,
+        },
+        {
+          from: '/api2/',
+          to: process.env.API_2,
+          status: 200,
+          force: true,
+        },
+        {
+          from: '/storage/',
+          to: process.env.IMG_URL,
+          status: 200,
+          force: true,
+        }
+      ]
+    }
   }
 }
