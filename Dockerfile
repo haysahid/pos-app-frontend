@@ -12,7 +12,8 @@ RUN apk add git
 # copy the app, note .dockerignore
 COPY . /usr/src/pos-app-frontend/
 RUN npm install
-RUN npm run build
+# RUN npm run build
+RUN npm run generate
 
 ENV API_1="http://34.143.202.14/api/"
 
