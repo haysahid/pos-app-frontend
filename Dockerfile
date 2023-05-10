@@ -14,13 +14,13 @@ COPY . /usr/src/pos-app-frontend/
 RUN npm install
 RUN npm run build
 
-ENV API_1="http://34.143.202.14/api/"
+# ENV API_1="http://34.143.202.14/api/"
 
-# ENV API_1="http://127.0.0.1:8000/api/"
+ENV API_1="http://projects.my.id/api/"
 ENV API_2="https://api.rajaongkir.com/starter/"
-# ENV IMG_URL="http://127.0.0.1:8000/storage/"
+ENV IMG_URL="http://projects.my.id/storage/"
 
-ENV IMG_URL="http://34.143.202.14/storage/"
+# ENV IMG_URL="http://34.143.202.14/storage/"
 
 EXPOSE 3000
 
