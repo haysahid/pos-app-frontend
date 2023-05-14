@@ -601,7 +601,7 @@ export default {
       if (this.new_order.order.city && this.new_order.order.weight) {
         let data = new FormData()
 
-        data.append('origin', '501')
+        data.append('origin', '327')
         data.append('destination', this.new_order.order.city)
         data.append('weight', this.new_order.order.weight * 1000)
         data.append('courier', 'jne')
